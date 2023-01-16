@@ -10,7 +10,7 @@ typedef enum
 
 void Power_On();
 void Power_Off();
-double Power_Quantity(void);
+double Power_Quantity();
 PowerStatue Power_GetStatue();
 
 #endif // __hardware_h
