@@ -15,9 +15,18 @@
 #include <vector>
 #include <string>
 #include <arduino.h>
+#include "lvgl.h"
+#include "TFT_eSPI.h"
+#include "FT6336U.h"
 
 #include "AppBase.h"
+#include "Interface.h"
 #include "hardware.h"
+#include "pins.h"
+
+#define DISP_BUF_SIZE ((240*320)/10)
+static lv_disp_draw_buf_t draw_buf;
+static lv_color_t buf_1[DISP_BUF_SIZE];
 
 /**
  * @brief 用于 Resource 的派生类赋予 MgrBase 派生类权限
@@ -33,18 +42,22 @@ class MgrBase
 class HardwareIOMgr : public MgrBase
 {
 private:
+    TFT_eSPI _screen;
+    FT6336U _screen_touch(LCD_SDA, LCD_SCL, LCD_RST, GPIO_NUM_NC);
+    FT6336U_TouchPointType _screen_touch_point;
 
 public:
     HardwareIOMgr(/* args */);
     ~HardwareIOMgr();
+
+    void ScreenFlush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p);
+    void ScreenRotate(uint8_t r);
 
     void Compass_Cmd(bool cmd);
     QMC5883L_DataPackage Compass_GetData();
     uint16_t Compass_GetXData();
     uint16_t Compass_GetYData();
     uint16_t Compass_GetZData();
-
-    void Screen_Touch(short x, short y);
     
     void Shutdown();
 };
