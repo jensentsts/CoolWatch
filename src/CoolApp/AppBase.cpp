@@ -1,8 +1,6 @@
 
 #include "AppBase.h"
-
 #include "lvgl.h"
-#include "AsResource.h"
 
 AppBase::AppBase()
 {

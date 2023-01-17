@@ -69,7 +69,7 @@ void QMC5883L_SendData(uint8_t addr, uint8_t dat)
     QMC5883L_I2C_Stop();
 }
 
-uint8_t QMC5883L_ReadData(uint8_t addr, uint8_t *dat)
+void QMC5883L_ReadData(uint8_t addr, uint8_t *dat)
 {
     QMC5883L_I2C_Start();
     QMC5883L_I2C_SendByte(addr & 0x00);

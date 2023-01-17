@@ -27,9 +27,9 @@ protected:
 class Desktop : public InterfaceBase
 {
 private:
-    /* data */
+
 public:
-    Desktop(/* args */);
+    Desktop();
     ~Desktop();
 };
 
@@ -39,9 +39,9 @@ public:
 class Cards : public InterfaceBase
 {
 private:
-    /* data */
+
 public:
-    Cards(/* args */);
+    Cards();
     ~Cards();
 };
 
@@ -51,9 +51,9 @@ public:
 class Lock : public InterfaceBase
 {
 private:
-    /* data */
+    
 public:
-    Lock(/* args */);
+    Lock();
     ~Lock();
 };
 
@@ -63,9 +63,9 @@ public:
 class StartAnimation : public InterfaceBase
 {
 private:
-    /* data */
+    
 public:
-    StartAnimation(/* args */);
+    StartAnimation();
     ~StartAnimation();
 };
 
@@ -75,9 +75,9 @@ public:
 class StopAnimation : public InterfaceBase
 {
 private:
-    /* data */
+    
 public:
-    StopAnimation(/* args */);
+    StopAnimation();
     ~StopAnimation();
 };
 
