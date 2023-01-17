@@ -12,6 +12,7 @@
 #ifndef __CoolApp_h
 #define __CoolApp_h
 
-
+#include "AppBase.h"
+#include "Settings.h"
 
 #endif // __CoolApp_h

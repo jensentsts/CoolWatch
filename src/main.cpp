@@ -5,9 +5,10 @@
 #include "CoolApp.h"
 
 void setup() {
-    lv_init();
 }
 
 void loop() {
-
+    // @todo
+    lv_timer_handler();
+    delay(1);
 }

@@ -8,9 +8,13 @@
 #include <driver/usb_serial_jtag.h>
 
 #include "TFT_eSPI.h"
+#include "TFT_LCD.h"
 #include "pins.h"
 #include "Power.h"
 #include "QMC5883L.h"
+
+#define WIDTH 240
+#define HEIGHT 280
 
 struct Graph
 {

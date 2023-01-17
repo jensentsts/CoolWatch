@@ -18,11 +18,12 @@ extern const auto IIC_SDA = GPIO_NUM_48;
 extern const auto USB_DP = USB_DP_GPIO_NUM;
 extern const auto USB_DM = USB_DM_GPIO_NUM;
 
-extern const auto LCD_BLK = GPIO_NUM_42;
-extern const auto LCD_SDA = CLK_OUT1;
-extern const auto LCD_SCL = CLK_OUT2;
-extern const auto LCD_RST = GPIO_NUM_37;
-extern const auto LCD_DC = GPIO_NUM_38;
-extern const auto LCD_CS = GPIO_NUM_39;
+extern const auto LCD_BLK = 35;
+extern const auto LCD_BLK_PWM_CHANNEL = 0;
+extern const auto LCD_SDA = 34;
+extern const auto LCD_SCL = 33;
+extern const auto LCD_CS = 32;
+extern const auto LCD_DC = 31;
+extern const auto LCD_RST = 30;
 
 #endif // __pins_h

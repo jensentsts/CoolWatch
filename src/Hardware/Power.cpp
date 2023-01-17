@@ -66,7 +66,7 @@ PowerStatue Power_GetStatue()
     {
         return BATTERY_LOW_POWER;
     }
-    if (vol => 4)
+    if (vol >= 4.8)
     {
         return USB_CONNECTED;
     }

@@ -28,8 +28,6 @@
 ***************************************************************************************/
 // Override defaults
 #define USER_SETUP_LOADED
-#define CONFIG_TFT_ST7789_DRIVER
-#define CONFIG_TFT_LOAD_FONT2
 
 /***************************************************************************************
 **                         Section 1: Load TFT driver
