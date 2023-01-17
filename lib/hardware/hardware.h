@@ -7,18 +7,15 @@
 #include <driver/adc.h>
 #include <driver/usb_serial_jtag.h>
 
+#include "TFT_eSPI.h"
 #include "pins.h"
+#include "Power.h"
+#include "QMC5883L.h"
 
-typedef enum
+struct Graph
 {
-    BATTERY,
-    BATTERY_LOW_POWER,
-    USB_CONNECTED
-}PowerStatue;
-
-void Power_On();
-void Power_Off();
-double Power_Quantity();
-PowerStatue Power_GetStatue();
+    size_t width, height;
+    uint16_t *graph;
+};
 
 #endif // __hardware_h

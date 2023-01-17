@@ -1,9 +1,13 @@
 #include <Arduino.h>
 
+#include "hardware.h"
+#include "CoolSystem.h"
+#include "CoolApp.h"
+
 void setup() {
-  // put your setup code here, to run once:
+    lv_init();
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+
 }

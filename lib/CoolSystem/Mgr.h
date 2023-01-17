@@ -17,29 +17,36 @@
 #include <arduino.h>
 
 #include "AppBase.h"
-
-///////////////////////////////////////////////////////////////////////////
-// 不放这里编译不过
-struct Graph
-{
-    size_t width, height;
-    uint8_t *graph;
-};
-
-struct AppDataPackage
-{
-    std::string app_name;
-    Graph *icon;
-    AppDataPackage(std::string, Graph*);
-};
-///////////////////////////////////////////////////////////////////////////
+#include "hardware.h"
 
 /**
  * @brief 用于 Resource 的派生类赋予 MgrBase 派生类权限
  */
 class MgrBase
 {
-    // Nothing here, for rights in resources.
+    // Nothing here, for rights in Resource.
+};
+
+/**
+ * @brief 硬件输入输出管理器
+ */
+class HardwareIOMgr : public MgrBase
+{
+private:
+
+public:
+    HardwareIOMgr(/* args */);
+    ~HardwareIOMgr();
+
+    void Compass_Cmd(bool cmd);
+    QMC5883L_DataPackage Compass_GetData();
+    uint16_t Compass_GetXData();
+    uint16_t Compass_GetYData();
+    uint16_t Compass_GetZData();
+
+    void Screen_Touch(short x, short y);
+    
+    void Shutdown();
 };
 
 /**
@@ -61,23 +68,19 @@ public:
 class InterfaceMgr : public MgrBase
 {
 private:
-    /* data */
+    StartAnimation _start_animation;
+    StopAnimation _stop_animation;
+    Lock _lock;
+    Desktop _desktop;
+    Cards _cards;
+
 public:
     InterfaceMgr(/* args */);
     ~InterfaceMgr();
+    void StartAnimationPlay();
+    void StopAnimationPlay();
 };
 
-/**
- * @brief 监听硬件状态、管理运行时硬件数据，如罗盘、电池、屏幕亮灭与亮度
- */
-class HardwareMgr
-{
-private:
-    /* data */
-public:
-    HardwareMgr(/* args */);
-    ~HardwareMgr();
-};
 
 /**
  * @brief 负责USB、“文件”保存
@@ -92,7 +95,7 @@ public:
 };
 
 extern AppMgr app_mgr;
-extern HardwareMgr hardware_mgr;
+extern HardwareIOMgr hardwareio_mgr;
 extern InterfaceMgr interface_mgr;
 extern FileMgr file_mgr;
 

@@ -7,8 +7,63 @@
 
 #include "Hardware.h"
 #include "CoolApp.h"
+#include "hardware.h"
 
-AppDataPackage::AppDataPackage(std::string app_name, Graph* icon)
+HardwareIOMgr::HardwareIOMgr()
+{
+    Power_Init();
+    Power_On();
+    QMC5883L_Init();
+}
+
+HardwareIOMgr::~HardwareIOMgr()
+{
+}
+
+void HardwareIOMgr::Compass_Cmd(bool cmd)
+{
+    if (cmd)
+    {
+        QMC5883L_Start();
+    }
+    else
+    {
+        QMC5883L_Stop();
+    }
+}
+
+QMC5883L_DataPackage HardwareIOMgr::Compass_GetData()
+{
+    return QMC5883L_GetData();
+}
+
+uint16_t Compass_GetXData()
+{
+    return QMC5883L_GetXData();
+}
+
+uint16_t Compass_GetYData()
+{
+    return QMC5883L_GetYData();
+}
+
+uint16_t Compass_GetZData()
+{
+    return QMC5883L_GetZData();
+}
+
+void HardwareIOMgr::Screen_Touch(short x, short y)
+{
+    
+}
+
+void HardwareIOMgr::Shutdown()
+{
+    interface_mgr.StopAnimationPlay();
+    Power_Off();
+}
+
+AppDataPackage::AppDataPackage(std::string app_name, Graph *icon)
 {
     this->app_name = app_name;
     this->icon = icon;
@@ -21,35 +76,28 @@ AppMgr::AppMgr()
 
 AppMgr::~AppMgr()
 {
-
 }
 
 InterfaceMgr::InterfaceMgr()
 {
-
 }
 
 InterfaceMgr::~InterfaceMgr()
 {
-
 }
 
-HardwareMgr::HardwareMgr()
+void InterfaceMgr::StartAnimationPlay()
 {
-
 }
 
-HardwareMgr::~HardwareMgr()
+void InterfaceMgr::StopAnimationPlay()
 {
-
 }
 
 FileMgr::FileMgr()
 {
-
 }
 
 FileMgr::~FileMgr()
 {
-    
 }

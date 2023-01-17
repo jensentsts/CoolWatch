@@ -15,6 +15,14 @@
 #include "AsResource.h"
 #include "lvgl.h"
 #include "Mgr.h"
+#include "hardware.h"
+
+struct AppDataPackage
+{
+    std::string app_name;
+    Graph *icon;
+    AppDataPackage(std::string, Graph*);
+};
 
 class AppBase : public Resource
 {
