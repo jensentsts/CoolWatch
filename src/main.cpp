@@ -5,6 +5,7 @@
 #include "CoolApp.h"
 
 void setup() {
+    
 }
 
 void loop() {

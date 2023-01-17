@@ -4,8 +4,9 @@
 #include <Arduino.h>
 #include "pins.h"
 
-struct QMC5883L_DataPackage
+class QMC5883L_DataPackage
 {
+public:
     double x, y, z;
 };
 

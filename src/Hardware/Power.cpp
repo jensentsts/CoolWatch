@@ -3,7 +3,7 @@
 #include "Mgr.h"
 #include <Arduino.h>
 #include <driver/gpio.h>
-// #include <driver/adc.h>
+#include <driver/adc.h>
 
 hw_timer_t *power_timer = nullptr;
 
@@ -35,7 +35,7 @@ void Power_Init()
     analogSetPinAttenuation(ADC_BAT, ADC_11db);
     analogReadResolution(12);
     adcAttachPin(ADC_BAT);
-    adcStart();
+    adc_digi_start();
 
     power_timer = timerBegin(0, 8000, true);
     timerAttachInterrupt(power_timer, Key_Power_TimerIntr, true);

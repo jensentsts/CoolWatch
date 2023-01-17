@@ -1,8 +1,6 @@
 #ifndef __AsResource_h
 #define __AsResource_h
 
-#include "Mgr.h"
-
 /**
  * @brief 用于为 MgrBase 派生类赋予访问内部信息的权限
  */

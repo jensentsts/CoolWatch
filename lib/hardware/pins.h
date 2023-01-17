@@ -1,6 +1,8 @@
 #ifndef __pins_h
 #define __pins_h
 
+#pragma once
+
 #include <driver/gpio.h>
 #include <driver/i2c.h>
 #include <driver/adc.h>

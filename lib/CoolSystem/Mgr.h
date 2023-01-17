@@ -19,9 +19,11 @@
 #include "TFT_eSPI.h"
 #include "FT6336U.h"
 
+#include "CoolApp.h"
 #include "AppBase.h"
 #include "Interface.h"
 #include "hardware.h"
+#include "QMC5883L.h"
 #include "pins.h"
 
 #define DISP_BUF_SIZE ((240*320)/10)
@@ -43,7 +45,7 @@ class HardwareIOMgr : public MgrBase
 {
 private:
     TFT_eSPI _screen;
-    FT6336U _screen_touch(LCD_SDA, LCD_SCL, LCD_RST, GPIO_NUM_NC);
+    FT6336U _screen_touch = FT6336U(LCD_SDA, LCD_SCL, LCD_RST, GPIO_NUM_NC);
     FT6336U_TouchPointType _screen_touch_point;
 
 public:
@@ -51,6 +53,7 @@ public:
     ~HardwareIOMgr();
 
     void ScreenFlush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p);
+    void ScreenTouchRead(lv_indev_drv_t * indev_driver, lv_indev_data_t * data);
     void ScreenRotate(uint8_t r);
 
     void Compass_Cmd(bool cmd);
@@ -61,6 +64,8 @@ public:
     
     void Shutdown();
 };
+
+struct AppDataPackage;  // 声明一下，不然报错
 
 /**
  * @brief App管理器

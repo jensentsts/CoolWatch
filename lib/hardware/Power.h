@@ -1,7 +1,7 @@
 #ifndef __Power_h
 #define __Power_h
 
-#include "hardware.h"
+#include "pins.h"
 #include <Arduino.h>
 #include <driver/gpio.h>
 #include <driver/adc.h>

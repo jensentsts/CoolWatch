@@ -30,7 +30,11 @@ HardwareIOMgr::HardwareIOMgr()
     disp_drv.flush_cb = TFTLCD_DispFlush;
     lv_disp_drv_register(&disp_drv);
     /* 输入设备注册 */
-    
+    lv_indev_drv_t indev_drv;
+    lv_indev_drv_init(&indev_drv);
+    indev_drv.type = LV_INDEV_TYPE_POINTER;
+    indev_drv.read_cb = TFTLCD_TouchRead;
+    lv_indev_drv_register(&indev_drv);
 }
 
 HardwareIOMgr::~HardwareIOMgr()
@@ -66,6 +70,28 @@ void HardwareIOMgr::ScreenFlush(lv_disp_drv_t *disp, const lv_area_t *area, lv_c
     lv_disp_flush_ready(disp);
 }
 
+void HardwareIOMgr::ScreenTouchRead(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
+{
+    this->_screen_touch_point = this->_screen_touch.scan();
+    static int16_t last_x = 0;
+    static int16_t last_y = 0;
+    /* 判断屏幕是否被按下 */
+    bool touched = this->_screen_touch_point.touch_count;
+    if (touched)
+    {
+        last_x = this->_screen_touch_point.tp[0].x;
+        last_y = this->_screen_touch_point.tp[0].y;
+        data->state = LV_INDEV_STATE_PRESSED;
+    }
+    else
+    {
+        data->state = LV_INDEV_STATE_RELEASED;
+    }
+    /* 将获取的坐标传入 LVGL */
+    data->point.x = last_x;
+    data->point.y = last_y;
+}
+
 QMC5883L_DataPackage HardwareIOMgr::Compass_GetData()
 {
     return QMC5883L_GetData();
@@ -90,12 +116,6 @@ void HardwareIOMgr::Shutdown()
 {
     interface_mgr.StopAnimationPlay();
     Power_Off();
-}
-
-AppDataPackage::AppDataPackage(std::string app_name, Graph *icon)
-{
-    this->app_name = app_name;
-    this->icon = icon;
 }
 
 AppMgr::AppMgr()

@@ -15,7 +15,7 @@
 #include "AsResource.h"
 #include "lvgl.h"
 
-class InterfaceBase : public Resource
+class InterfaceBase : public Resource 
 {
 protected:
     lv_obj_t *_root;
