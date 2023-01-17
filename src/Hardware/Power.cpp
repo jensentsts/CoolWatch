@@ -1,15 +1,17 @@
 #include "Power.h"
-#include "hardware.h"
-#include "Mgr.h"
 #include <Arduino.h>
 #include <driver/gpio.h>
 #include <driver/adc.h>
+#include "hardware.h"
+#include "TimerConf.h"
+#include "Mgr.h"
 
 hw_timer_t *power_timer = nullptr;
 
 void Key_Power_TimerIntr(void)
 {
     hardwareio_mgr.Shutdown();
+    Power_Off();
 }
 
 void IRAM_ATTR Key_Power_Intr(void)
@@ -37,10 +39,11 @@ void Power_Init()
     adcAttachPin(ADC_BAT);
     adc_digi_start();
 
-    power_timer = timerBegin(0, 8000, true);
+    power_timer = timerBegin(POWER_TIMER, POWER_TIMER_DIV, true);
     timerAttachInterrupt(power_timer, Key_Power_TimerIntr, true);
     timerAlarmWrite(power_timer, POWER_INTERVAL * 1000, false);
     timerAlarmEnable(power_timer);
+    timerSetAutoReload(power_timer, false);
 }
 
 void Power_On()
@@ -62,11 +65,11 @@ double Power_Quantity()
 PowerStatue Power_GetStatue()
 {
     double vol = Power_Quantity();
-    if (vol <= 3.1)
+    if (vol <= POWER_LOW_VOLTAGE_LEVEL)
     {
         return BATTERY_LOW_POWER;
     }
-    if (vol >= 4.8)
+    if (vol >= POWER_USB_CONNECTED_VOLTAGE_LEVEL)
     {
         return USB_CONNECTED;
     }

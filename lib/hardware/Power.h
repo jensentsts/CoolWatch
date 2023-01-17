@@ -6,7 +6,8 @@
 #include <driver/gpio.h>
 #include <driver/adc.h>
 
-#define POWER_INTERVAL 2333
+#define POWER_LOW_VOLTAGE_LEVEL 3.0
+#define POWER_USB_CONNECTED_VOLTAGE_LEVEL 4.8
 
 typedef enum
 {

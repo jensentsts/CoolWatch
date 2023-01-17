@@ -14,11 +14,14 @@ HardwareIOMgr::HardwareIOMgr()
     Power_Init();
     Power_On();
     QMC5883L_Init();
+    TFTLCD_Init();
+
     this->_screen.init();
     this->_screen_touch.begin();
     ledcSetup(LCD_BLK_PWM_CHANNEL, 2000, TFT_BL);
     ledcAttachPin(LCD_BLK, LCD_BLK_PWM_CHANNEL);
     ledcWrite(LCD_BLK_PWM_CHANNEL, (int)(1 * 255));
+
     lv_init();
     lv_disp_draw_buf_init(&draw_buf, buf_1, NULL, DISP_BUF_SIZE);
     /* 显示设备注册 */
@@ -35,6 +38,10 @@ HardwareIOMgr::HardwareIOMgr()
     indev_drv.type = LV_INDEV_TYPE_POINTER;
     indev_drv.read_cb = TFTLCD_TouchRead;
     lv_indev_drv_register(&indev_drv);
+
+    TFTLCD_TickStart();
+
+    _compass_active = false;
 }
 
 HardwareIOMgr::~HardwareIOMgr()
@@ -51,6 +58,7 @@ void HardwareIOMgr::Compass_Cmd(bool cmd)
     {
         QMC5883L_Stop();
     }
+    this->_compass_active = cmd;
 }
 
 void HardwareIOMgr::ScreenRotate(uint8_t r)
@@ -114,8 +122,8 @@ uint16_t Compass_GetZData()
 
 void HardwareIOMgr::Shutdown()
 {
+    file_mgr.SaveAll();
     interface_mgr.StopAnimationPlay();
-    Power_Off();
 }
 
 AppMgr::AppMgr()
@@ -137,10 +145,44 @@ InterfaceMgr::~InterfaceMgr()
 
 void InterfaceMgr::StartAnimationPlay()
 {
+    // 防止bug
+    this->_desktop.Hide();
+    this->_cards.Hide();
+    this->_lock.Hide();
+    this->_stop_animation.Hide();
+    this->_start_animation.Start();
 }
 
 void InterfaceMgr::StopAnimationPlay()
 {
+    // 防止bug
+    this->_desktop.Hide();
+    this->_cards.Hide();
+    this->_lock.Hide();
+    this->_start_animation.Hide();
+    this->_stop_animation.Start();
+}
+
+ConfigMgr::ConfigMgr()
+{
+    /* @todo */
+    this->_desktop_bgimg.width = 0;
+    this->_desktop_bgimg.height = 0;
+    this->_desktop_bgimg.graph = nullptr;
+
+    this->_lock_bgimg.width = 0;
+    this->_lock_bgimg.height = 0;
+    this->_lock_bgimg.graph = nullptr;
+}
+
+Graph ConfigMgr::DesktopBgImg()
+{
+    return this->_desktop_bgimg;
+}
+
+Graph ConfigMgr::LockBgImg()
+{
+    return this->_lock_bgimg;
 }
 
 FileMgr::FileMgr()
@@ -148,5 +190,9 @@ FileMgr::FileMgr()
 }
 
 FileMgr::~FileMgr()
+{
+}
+
+void FileMgr::SaveAll()
 {
 }

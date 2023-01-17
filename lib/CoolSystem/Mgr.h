@@ -48,8 +48,10 @@ private:
     FT6336U _screen_touch = FT6336U(LCD_SDA, LCD_SCL, LCD_RST, GPIO_NUM_NC);
     FT6336U_TouchPointType _screen_touch_point;
 
+    bool _compass_active;
+
 public:
-    HardwareIOMgr(/* args */);
+    HardwareIOMgr();
     ~HardwareIOMgr();
 
     void ScreenFlush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p);
@@ -99,17 +101,30 @@ public:
     void StopAnimationPlay();
 };
 
+class ConfigMgr  : public MgrBase
+{
+private:
+    Graph _desktop_bgimg;
+    Graph _lock_bgimg;
+
+public:
+    ConfigMgr();
+
+    Graph DesktopBgImg();
+    Graph LockBgImg();
+};
 
 /**
  * @brief 负责USB、“文件”保存
  */
-class FileMgr
+class FileMgr : public MgrBase
 {
 private:
     /* data */
 public:
     FileMgr(/* args */);
     ~FileMgr();
+    void SaveAll();
 };
 
 extern AppMgr app_mgr;

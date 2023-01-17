@@ -10,7 +10,6 @@
 
 #define  POWER_IO 39         // GPIO1
 #define  KEY_POWER 38        // GPIO2
-
 #define  ADC_BAT 15          // ADC2_CHANNEL_3
 
 #define  DRDY GPIO_NUM_45

@@ -9,7 +9,14 @@ void setup() {
 }
 
 void loop() {
-    // @todo
-    lv_timer_handler();
-    delay(1);
+    // @todo 睡眠管理
+    if (lv_disp_get_inactive_time(NULL) < 3000)
+    {
+        lv_timer_handler();
+    }
+    else
+    {
+        TFTLCD_TickStop();
+    }
+    delay(5);
 }
