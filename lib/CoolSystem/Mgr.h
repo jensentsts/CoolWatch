@@ -99,6 +99,8 @@ public:
     ~InterfaceMgr();
     void StartAnimationPlay();
     void StopAnimationPlay();
+    
+    void StartApp(int x, int y, lv_obj_t *app_root);
 };
 
 class ConfigMgr  : public MgrBase
@@ -130,6 +132,7 @@ public:
 extern AppMgr app_mgr;
 extern HardwareIOMgr hardwareio_mgr;
 extern InterfaceMgr interface_mgr;
+extern ConfigMgr config_mgr;
 extern FileMgr file_mgr;
 
 #endif // __Mgr_h

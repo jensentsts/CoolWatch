@@ -143,6 +143,12 @@ InterfaceMgr::~InterfaceMgr()
 {
 }
 
+void InterfaceMgr::StartApp(int x, int y, lv_obj_t *app_root)
+{
+
+}
+
+
 void InterfaceMgr::StartAnimationPlay()
 {
     // 防止bug

@@ -40,10 +40,16 @@ Cards::~Cards()
 
 Lock::Lock()
 {
+    
 }
 
 Lock::~Lock()
 {
+}
+
+void Lock::Show()
+{
+    
 }
 
 StartAnimation::StartAnimation()

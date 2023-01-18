@@ -64,7 +64,8 @@ private:
 public:
     Lock();
     ~Lock();
-    void 
+    void Show();
+    
 };
 
 /**
