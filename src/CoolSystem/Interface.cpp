@@ -1,20 +1,25 @@
 #include "Interface.h"
 #include "Mgr.h"
 
-InterfaceBase &InterfaceBase::transfer(lv_dir_t dir)
+Desktop::Desktop() : InterfaceBase()
 {
-    return *this;
+    this->_bgimg = nullptr;
+    this->_bgimg_disp = nullptr;
+    this->_apps_disp = nullptr;
 }
 
-Desktop::Desktop()
+void Desktop::Show()
 {
+    if (this->_root != nullptr)
+    {
+        return;
+    }
+
+    InterfaceBase::Show(nullptr);
+    
 }
 
-Desktop::~Desktop()
-{
-}
-
-Cards::Cards()
+Cards::Cards() : InterfaceBase()
 {
 }
 
@@ -22,7 +27,7 @@ Cards::~Cards()
 {
 }
 
-Lock::Lock()
+Lock::Lock() : InterfaceBase()
 {
 }
 
@@ -34,8 +39,21 @@ void Lock::Show()
 {
 }
 
-StartAnimation::StartAnimation()
+TopBar::TopBar()
 {
+}
+
+TopBar::~TopBar()
+{
+}
+
+void TopBar::Show()
+{
+}
+
+StartAnimation::StartAnimation() : InterfaceBase()
+{
+    // @todo 设计更丰富的动画效果
     this->_label = lv_label_create(this->_root);
     lv_label_set_text(this->_label, "Hello, World");
     lv_obj_set_align(this->_label, LV_ALIGN_CENTER);
@@ -45,15 +63,9 @@ StartAnimation::~StartAnimation()
 {
 }
 
-void StartAnimation::Start()
+void StartAnimation::Show()
 {
-    this->Show(nullptr);
-    /* @todo */
-}
 
-void StartAnimation::Stop()
-{
-    this->Hide();
     /* @todo */
 }
 
@@ -63,7 +75,7 @@ bool StartAnimation::isFinal()
     return true;
 }
 
-StopAnimation::StopAnimation()
+StopAnimation::StopAnimation() : InterfaceBase()
 {
 }
 
@@ -71,15 +83,9 @@ StopAnimation::~StopAnimation()
 {
 }
 
-void StopAnimation::Start()
+void StopAnimation::Show()
 {
-    this->Show(nullptr);
-    /* @todo */
-}
 
-void StopAnimation::Stop()
-{
-    this->Hide();
     /* @todo */
 }
 

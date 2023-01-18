@@ -7,6 +7,8 @@ struct Graph
 {
     size_t width, height;
     uint16_t *graph;
+    Graph();
+    Graph(size_t w, size_t h, uint16_t *graph);
 };
 
 #endif // __Graph_h

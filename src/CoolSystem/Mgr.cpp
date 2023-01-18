@@ -8,6 +8,7 @@
 #include "Hardware.h"
 #include "CoolApp.h"
 #include "hardware.h"
+#include "Graph.h"
 
 HardwareIOMgr::HardwareIOMgr()
 {
@@ -128,7 +129,7 @@ void HardwareIOMgr::Shutdown()
 
 AppMgr::AppMgr()
 {
-    _app_list.push_back(AppDataPackage("Settings", nullptr));
+    _app_list.push_back(AppDataPackage("Settings", Graph()));
 }
 
 AppMgr::~AppMgr()

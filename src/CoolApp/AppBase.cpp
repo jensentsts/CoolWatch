@@ -1,7 +1,7 @@
 #include "AppBase.h"
 #include "lvgl.h"
 
-AppDataPackage::AppDataPackage(std::string app_name, Graph *icon)
+AppDataPackage::AppDataPackage(std::string app_name, Graph icon)
 {
     this->app_name = app_name;
     this->icon = icon;

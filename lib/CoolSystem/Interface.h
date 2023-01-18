@@ -12,15 +12,15 @@
 #ifndef __Interface_h
 #define __Interface_h
 
+#include <map>
 #include "AsResource.h"
 #include "lvgl.h"
 #include "CoolWidgets.h"
 
 class InterfaceBase : public CoolWidget
 {
-
 public:
-    InterfaceBase& transfer(lv_dir_t dir);
+    std::map<lv_dir_t, InterfaceBase*> transfer;
 };
 
 /**
@@ -29,11 +29,13 @@ public:
 class Desktop : public InterfaceBase
 {
 private:
-    lv_obj_t* _desktop_bgimg;
+    Graph* _bgimg;
+    lv_obj_t* _bgimg_disp;
+    lv_obj_t* _apps_disp;
 
 public:
     Desktop();
-    ~Desktop();
+    void Show();
 };
 
 /**
@@ -76,7 +78,6 @@ public:
     TopBar();
     ~TopBar();
     void Show();
-    void Hide();
 };
 
 /**
@@ -90,8 +91,7 @@ private:
 public:
     StartAnimation();
     ~StartAnimation();
-    void Start();
-    void Stop();
+    void Show();
     bool isFinal();
 };
 
@@ -104,8 +104,7 @@ private:
 public:
     StopAnimation();
     ~StopAnimation();
-    void Start();
-    void Stop();
+    void Show();
     bool isFinal();
 };
 

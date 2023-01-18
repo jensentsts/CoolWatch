@@ -15,21 +15,22 @@
 #include "AsResource.h"
 #include "lvgl.h"
 #include "hardware.h"
+#include "Graph.h"
 
 struct Graph;
 
 struct AppDataPackage
 {
     std::string app_name = "Untitled";
-    Graph *icon = nullptr;
-    AppDataPackage(std::string app_name, Graph* icon);
+    Graph icon;
+    AppDataPackage(std::string app_name, Graph icon);
 };
 
 class AppBase : public Resource
 {
 private:
     lv_obj_t *_container;
-    AppDataPackage _app_data_package = AppDataPackage("Untitled", nullptr);
+    AppDataPackage _app_data_package = AppDataPackage("Untitled", Graph());
 
 public:
     AppBase();

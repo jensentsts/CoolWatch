@@ -54,8 +54,6 @@ lv_obj_t *Card::Show(lv_obj_t *father = nullptr)
     {
         return this->_root;
     }
-    /* @todo icon zoom */
-    /* @todo margin in content*/
     CoolWidget::Show(father);
     // Root
     lv_obj_set_size(this->_root, CARD_WIDTH, CARD_HEIGHT);
@@ -75,6 +73,7 @@ lv_obj_t *Card::Show(lv_obj_t *father = nullptr)
         lv_img_set_src(this->_title_icon_disp, this->title_icon->graph);
         lv_obj_set_width(this->_title_icon_disp, this->title_icon->width);
         lv_obj_set_height(this->_title_icon_disp, this->title_icon->height);
+        lv_img_set_zoom(this->_title_icon_disp, CARD_TITLE_ICON_ZOOM);
     }
     else
     {
@@ -96,7 +95,6 @@ lv_obj_t *Card::Show(lv_obj_t *father = nullptr)
     }
 
     // Container
-    /* @todo container_disp 改成vector*/
     this->_content_disp = lv_obj_create(this->_root);
     lv_obj_set_scrollbar_mode(this->_content_disp, LV_SCROLLBAR_MODE_ACTIVE); // 滚动条
     if (this->container_widget != nullptr)
@@ -182,6 +180,7 @@ lv_obj_t *Desktop_AppIcon::Show(lv_obj_t *father)
     this->_app_name_disp = lv_label_create(this->_root);
     lv_label_set_text(this->_app_name_disp, this->_app_name.c_str());
     lv_obj_set_style_pad_top(this->_app_name_disp, APP_ITEMS_PADDING, LV_STATE_DEFAULT);
+    lv_obj_align(this->_app_name_disp, LV_ALIGN_BOTTOM_MID, 0, 0); // @todo 居中对齐
 
     return this->_root;
 }

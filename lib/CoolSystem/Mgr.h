@@ -78,6 +78,8 @@ private:
 public:
     AppMgr(/* args */);
     ~AppMgr();
+    const AppDataPackage* operator[] (size_t index);
+    size_t length();
 };
 
 /**
