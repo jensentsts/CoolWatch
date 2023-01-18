@@ -14,17 +14,13 @@
 
 #include "AsResource.h"
 #include "lvgl.h"
+#include "CoolWidgets.h"
 
-class InterfaceBase : public Resource
+class InterfaceBase : public CoolWidget
 {
-protected:
-    lv_obj_t *_root;
 
 public:
-    InterfaceBase();
-    ~InterfaceBase();
-    void Show();
-    void Hide();
+    InterfaceBase& transfer(lv_dir_t dir);
 };
 
 /**
@@ -66,6 +62,21 @@ public:
     ~Lock();
     void Show();
     
+};
+
+class TopBar : public InterfaceBase
+{
+private:
+    lv_obj_t* _time_disp;
+    lv_obj_t* _battery_disp;
+    lv_obj_t* _battery_num_disp;
+    lv_obj_t* _icons_disp;
+
+public:
+    TopBar();
+    ~TopBar();
+    void Show();
+    void Hide();
 };
 
 /**

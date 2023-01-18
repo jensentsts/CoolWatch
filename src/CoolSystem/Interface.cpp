@@ -1,29 +1,13 @@
 #include "Interface.h"
 #include "Mgr.h"
 
-InterfaceBase::InterfaceBase()
+InterfaceBase &InterfaceBase::transfer(lv_dir_t dir)
 {
-    this->_root = lv_obj_create(nullptr);
-    lv_obj_add_flag(this->_root, LV_OBJ_FLAG_HIDDEN);
-}
-
-InterfaceBase::~InterfaceBase()
-{
-}
-
-void InterfaceBase::Show()
-{
-    lv_obj_clear_flag(this->_root, LV_OBJ_FLAG_HIDDEN);
-}
-
-void InterfaceBase::Hide()
-{
-    lv_obj_add_flag(this->_root, LV_OBJ_FLAG_HIDDEN);
+    return *this;
 }
 
 Desktop::Desktop()
 {
-
 }
 
 Desktop::~Desktop()
@@ -40,7 +24,6 @@ Cards::~Cards()
 
 Lock::Lock()
 {
-    
 }
 
 Lock::~Lock()
@@ -49,7 +32,6 @@ Lock::~Lock()
 
 void Lock::Show()
 {
-    
 }
 
 StartAnimation::StartAnimation()
@@ -65,7 +47,7 @@ StartAnimation::~StartAnimation()
 
 void StartAnimation::Start()
 {
-    this->Show();
+    this->Show(nullptr);
     /* @todo */
 }
 
@@ -91,7 +73,7 @@ StopAnimation::~StopAnimation()
 
 void StopAnimation::Start()
 {
-    this->Show();
+    this->Show(nullptr);
     /* @todo */
 }
 

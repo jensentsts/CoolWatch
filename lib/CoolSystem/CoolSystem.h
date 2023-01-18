@@ -14,5 +14,6 @@
 #include "AsResource.h"
 #include "Mgr.h"
 #include "Interface.h"
+#include "Graph.h"
 
 #endif // __CoolSystem_h

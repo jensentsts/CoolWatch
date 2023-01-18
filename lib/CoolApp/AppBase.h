@@ -34,6 +34,9 @@ private:
 public:
     AppBase();
     ~AppBase();
+    void Start();
+    void Loop();
+    void Stop();
 };
 
 #endif // __AppBase_h

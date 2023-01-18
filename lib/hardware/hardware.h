@@ -16,10 +16,4 @@
 #define WIDTH 240
 #define HEIGHT 280
 
-struct Graph
-{
-    size_t width, height;
-    uint16_t *graph;
-};
-
 #endif // __hardware_h
