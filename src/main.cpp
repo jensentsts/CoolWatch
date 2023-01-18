@@ -1,11 +1,17 @@
+
+#define DEBUG 1
+
 #include <Arduino.h>
 
 #include "hardware.h"
 #include "CoolSystem.h"
 #include "CoolApp.h"
+#include "img.h"
 
 void setup() {
-    
+    #if DEBUG == 1
+    Serial.begin(115400);
+    #endif // DEBUG
 }
 
 void loop() {

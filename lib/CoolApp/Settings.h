@@ -17,10 +17,12 @@
 class Settings : public AppBase
 {
 private:
-    /* data */
+    lv_obj_t *_menu;
+
 public:
-    Settings(/* args */);
+    Settings();
     ~Settings();
+    lv_obj_t* Start();
 };
 
 #endif // __Settings_h

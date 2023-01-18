@@ -13,7 +13,4 @@
 #include "Power.h"
 #include "QMC5883L.h"
 
-#define WIDTH 240
-#define HEIGHT 280
-
 #endif // __hardware_h

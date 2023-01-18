@@ -12,19 +12,26 @@
 #ifndef __SysConf_h
 #define __SysConf_h
 
-// WIDTH & HEIGHT 的定义在 hardware.h 末尾处
+//////////////////////////////////////////////////////////////
+// WIDTH & HEIGHT & RADIUS
+#define WIDTH 240
+#define HEIGHT 280
+#define RADIUS 10
 //////////////////////////////////////////////////////////////
 // 桌面背景图 bgimg
 #define BGIMG_WIDTH 240
 #define BGIMG_HEIGHT 280
 //////////////////////////////////////////////////////////////
 // App图标设置
-#define APP_ICON_WIDTH 256      // 图标数据宽度
-#define APP_ICON_HEIGHT 256     // 图标数据高度
-#define APP_ICON_RADIUS 12      // 圆角
-#define APP_ICON_ZOOM 72        // 图标缩放后大小
-#define APP_ICON_PADDING 30     // 间隔
-#define APP_ITEMS_PADDING 4     // 图标与文字的间隔
+#define APP_ICON_WIDTH 128          // 图标数据宽度
+#define APP_ICON_HEIGHT 128         // 图标数据高度
+#define APP_ICON_RADIUS 12          // 圆角
+#define APP_ICON_ZOOM 72            // 图标缩放后大小
+#define APP_ICON_PADDING 30         // 间隔
+#define APP_ICON_ITEMS_PADDING 4    // 图标与文字的间隔
+//////////////////////////////////////////////////////////////
+// App显示设置
+#define APP_TITLE_HEIGHT 20
 //////////////////////////////////////////////////////////////
 // 一般图标设置
 #define ICON_WIDTH 200

@@ -1,12 +1,12 @@
 /**
  * @file AppBase.h
  * @author Jensentsts (jensentsts@163.com)
- * @brief 
+ * @brief
  * @version 1.0.0
  * @date 2023-01-15
- * 
+ *
  * @copyright CC4.0 BY-NC-SA
- * 
+ *
  */
 
 #ifndef __AppBase_h
@@ -23,22 +23,42 @@ struct AppDataPackage
 {
     std::string app_name = "Untitled";
     Graph icon;
+    AppDataPackage();
     AppDataPackage(std::string app_name, Graph icon);
 };
 
 class AppBase : public Resource
 {
-private:
+protected:
+    lv_obj_t *_root;
     lv_obj_t *_container;
-    AppDataPackage _app_data_package = AppDataPackage("Untitled", Graph());
+    lv_obj_t *_title_container;
+    lv_obj_t *_title_disp;
+    AppDataPackage _app_data_package;
 
 public:
     AppBase();
+    AppBase(AppDataPackage *);
     ~AppBase();
-    void Start();
+    /**
+     * @brief app启动
+     * @note Start()只会在app启动时运行一次
+     * 
+     * @return lv_obj_t* 返回this->_root
+     */
+    lv_obj_t *Start();
+    /**
+     * @brief 循环
+     * @note while (appNotExit()) { Loop(); }
+     */
     void Loop();
+    /**
+     * @brief app退出
+     * @note Stop()只会在结束时运行一次
+     */
     void Stop();
+    // @todo
+    // void BackstageUpdate();
 };
 
 #endif // __AppBase_h
-

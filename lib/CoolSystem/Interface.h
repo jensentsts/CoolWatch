@@ -20,7 +20,10 @@
 class InterfaceBase : public CoolWidget
 {
 public:
-    std::map<lv_dir_t, InterfaceBase*> transfer;
+    std::map<lv_dir_t, InterfaceBase *> transfer;
+    lv_obj_t *GetActiveLvObj(); // 获取活动对象，例如被点击的卡片
+    template <typename t>
+    void SetActiveObj(t obj);
 };
 
 /**
@@ -29,13 +32,14 @@ public:
 class Desktop : public InterfaceBase
 {
 private:
-    Graph* _bgimg;
-    lv_obj_t* _bgimg_disp;
-    lv_obj_t* _apps_disp;
+    Graph *_bgimg;
+    lv_obj_t *_bgimg_disp;
+    lv_obj_t *_apps_disp;
 
 public:
     Desktop();
     void Show();
+    void SetActiveObj(size_t index);
 };
 
 /**
@@ -55,24 +59,24 @@ public:
 class Lock : public InterfaceBase
 {
 private:
-    lv_obj_t* _time_disp;
-    lv_obj_t* _date_disp;
-    lv_obj_t* _lock_bgimg;
+    lv_obj_t *_time_disp;
+    lv_obj_t *_date_disp;
+    lv_obj_t *_lock_bgimg;
 
 public:
     Lock();
     ~Lock();
     void Show();
-    
+    void SetActiveObj(size_t index);
 };
 
 class TopBar : public InterfaceBase
 {
 private:
-    lv_obj_t* _time_disp;
-    lv_obj_t* _battery_disp;
-    lv_obj_t* _battery_num_disp;
-    lv_obj_t* _icons_disp;
+    lv_obj_t *_time_disp;
+    lv_obj_t *_battery_disp;
+    lv_obj_t *_battery_num_disp;
+    lv_obj_t *_icons_disp;
 
 public:
     TopBar();
@@ -91,7 +95,7 @@ private:
 public:
     StartAnimation();
     ~StartAnimation();
-    void Show();
+    lv_obj_t *Show();
     bool isFinal();
 };
 
@@ -101,10 +105,12 @@ public:
 class StopAnimation : public InterfaceBase
 {
 private:
+    lv_obj_t *_label;
+
 public:
     StopAnimation();
     ~StopAnimation();
-    void Show();
+    lv_obj_t *Show();
     bool isFinal();
 };
 

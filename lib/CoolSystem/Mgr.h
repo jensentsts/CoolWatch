@@ -95,15 +95,19 @@ private:
     Cards _cards;
     TopBar _topbar;
 
-    InterfaceBase *_currentShow;
+    InterfaceBase *_currentDisplay;
+    lv_obj_t *_app_root;
+    size_t _app_index;
+    void _StartAnimationPlay();
+    void _StopAnimationPlay();
 
 public:
     InterfaceMgr(/* args */);
     ~InterfaceMgr();
-    void StartAnimationPlay();
-    void StopAnimationPlay();
-
-    void StartApp(int x, int y, lv_obj_t *app_root);
+    void Show();
+    void Hide();
+    void StartApp(size_t app_index, lv_obj_t *app_root);
+    void StopApp();
 };
 
 class ConfigMgr : public MgrBase

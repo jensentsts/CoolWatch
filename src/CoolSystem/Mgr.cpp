@@ -9,6 +9,7 @@
 #include "CoolApp.h"
 #include "hardware.h"
 #include "Graph.h"
+#include "SysConf.h"
 
 HardwareIOMgr::HardwareIOMgr()
 {
@@ -124,7 +125,7 @@ uint16_t Compass_GetZData()
 void HardwareIOMgr::Shutdown()
 {
     file_mgr.SaveAll();
-    interface_mgr.StopAnimationPlay();
+    interface_mgr.Hide();
 }
 
 AppMgr::AppMgr()
@@ -138,36 +139,59 @@ AppMgr::~AppMgr()
 
 InterfaceMgr::InterfaceMgr()
 {
+    this->_app_root = nullptr;
+    this->_currentDisplay = nullptr;
 }
 
 InterfaceMgr::~InterfaceMgr()
 {
 }
 
-void InterfaceMgr::StartApp(int x, int y, lv_obj_t *app_root)
-{
-
-}
-
-
-void InterfaceMgr::StartAnimationPlay()
+void InterfaceMgr::_StartAnimationPlay()
 {
     // 防止bug
     this->_desktop.Hide();
     this->_cards.Hide();
     this->_lock.Hide();
     this->_stop_animation.Hide();
-    this->_start_animation.Start();
+    this->_currentDisplay = &this->_start_animation;
+    this->_start_animation.Show();
 }
 
-void InterfaceMgr::StopAnimationPlay()
+void InterfaceMgr::_StopAnimationPlay()
 {
     // 防止bug
     this->_desktop.Hide();
     this->_cards.Hide();
     this->_lock.Hide();
     this->_start_animation.Hide();
-    this->_stop_animation.Start();
+    this->_currentDisplay = &this->_stop_animation;
+    this->_stop_animation.Show();
+}
+
+void InterfaceMgr::Show()
+{
+
+}
+
+void InterfaceMgr::Hide()
+{
+
+}
+
+void InterfaceMgr::StartApp(size_t app_index, lv_obj_t *app_root)
+{
+    this->_app_index = app_index;
+    this->_app_root = app_root;
+
+}
+
+void InterfaceMgr::StopApp()
+{
+    if (this->_app_root == nullptr)
+    {
+        return;
+    }
 }
 
 ConfigMgr::ConfigMgr()
