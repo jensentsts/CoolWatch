@@ -10,7 +10,7 @@
 #include "hardware.h"
 #include "Graph.h"
 #include "SysConf.h"
-
+//////////////////////////////////////////////////////////////////////////////
 HardwareIOMgr::HardwareIOMgr()
 {
     Power_Init();
@@ -43,11 +43,36 @@ HardwareIOMgr::HardwareIOMgr()
 
     TFTLCD_TickStart();
 
-    _compass_active = false;
+    this->_compass_active = false;
+    this->_has_booted = false;
 }
 
 HardwareIOMgr::~HardwareIOMgr()
 {
+}
+
+void HardwareIOMgr::Load()
+{
+    if (this->_has_booted)
+    {
+        return;
+    }
+#if DEBUG == 1
+    Serial.printf("Start to Boot. \r\n");
+#endif
+    file_mgr.Load();
+    interface_mgr.Load();
+    app_mgr.Load();
+    task_mgr.Load();
+    config_mgr.Load();
+    interface_mgr.Transfer("StartAnimation");
+    this->_has_booted = true;
+}
+
+void HardwareIOMgr::Close()
+{
+    interface_mgr.Close();
+    file_mgr.SaveAll();
 }
 
 void HardwareIOMgr::Compass_Cmd(bool cmd)
@@ -107,40 +132,54 @@ QMC5883L_DataPackage HardwareIOMgr::Compass_GetData()
     return QMC5883L_GetData();
 }
 
-uint16_t Compass_GetXData()
+uint16_t HardwareIOMgr::Compass_GetXData()
 {
     return QMC5883L_GetXData();
 }
 
-uint16_t Compass_GetYData()
+uint16_t HardwareIOMgr::Compass_GetYData()
 {
     return QMC5883L_GetYData();
 }
 
-uint16_t Compass_GetZData()
+uint16_t HardwareIOMgr::Compass_GetZData()
 {
     return QMC5883L_GetZData();
 }
-
-void HardwareIOMgr::Shutdown()
-{
-    file_mgr.SaveAll();
-    interface_mgr.Hide();
-}
-
+//////////////////////////////////////////////////////////////////////////////
 AppMgr::AppMgr()
 {
-    _app_list.push_back(AppDataPackage("Settings", Graph()));
 }
 
 AppMgr::~AppMgr()
 {
 }
 
+void AppMgr::Load()
+{
+    this->_app_list.clear();
+    this->_app_list.push_back(Settings());
+}
+
+void AppMgr::Close()
+{
+}
+//////////////////////////////////////////////////////////////////////////////
+TaskMgr::TaskMgr()
+{
+}
+
+void TaskMgr::Load()
+{
+}
+
+void TaskMgr::Close()
+{
+}
+//////////////////////////////////////////////////////////////////////////////
 InterfaceMgr::InterfaceMgr()
 {
     this->_app_root = nullptr;
-    this->_currentDisplay = nullptr;
 }
 
 InterfaceMgr::~InterfaceMgr()
@@ -154,7 +193,8 @@ void InterfaceMgr::_StartAnimationPlay()
     this->_cards.Hide();
     this->_lock.Hide();
     this->_stop_animation.Hide();
-    this->_currentDisplay = &this->_start_animation;
+    this->_currentDisplay.clear();
+    this->_currentDisplay.push_back(&this->_start_animation);
     this->_start_animation.Show();
 }
 
@@ -165,16 +205,52 @@ void InterfaceMgr::_StopAnimationPlay()
     this->_cards.Hide();
     this->_lock.Hide();
     this->_start_animation.Hide();
-    this->_currentDisplay = &this->_stop_animation;
+    if (this->_app_root != nullptr)
+    {
+        lv_obj_del(this->_app_root);
+    }
+    this->_currentDisplay.clear();
+    this->_currentDisplay.push_back(&this->_stop_animation);
     this->_stop_animation.Show();
 }
 
-void InterfaceMgr::Show()
+void InterfaceMgr::Load()
+{
+    this->_start_animation.Show();
+}
+
+void InterfaceMgr::Close()
 {
 
 }
 
-void InterfaceMgr::Hide()
+void InterfaceMgr::Transfer(lv_point_t point, lv_dir_t dir)
+{
+    TransferObj transfer_obj;
+    if (point.y < GESTURE_MARGIN)
+    {
+        transfer_obj.area = LV_DIR_TOP;
+    }
+    else if (point.y > HEIGHT - GESTURE_MARGIN)
+    {
+        transfer_obj.area = LV_DIR_BOTTOM;
+    }
+    else if (point.x < GESTURE_MARGIN)
+    {
+        transfer_obj.area = LV_DIR_LEFT;
+    }
+    else if (point.x > WIDTH - GESTURE_MARGIN)
+    {
+        transfer_obj.area = LV_DIR_RIGHT;
+    }
+    else
+    {
+        transfer_obj.area = LV_DIR_ALL;
+    }
+    transfer_obj.dir = dir;
+}
+
+void InterfaceMgr::Transfer(std::string)
 {
 
 }
@@ -183,7 +259,6 @@ void InterfaceMgr::StartApp(size_t app_index, lv_obj_t *app_root)
 {
     this->_app_index = app_index;
     this->_app_root = app_root;
-
 }
 
 void InterfaceMgr::StopApp()
@@ -193,29 +268,16 @@ void InterfaceMgr::StopApp()
         return;
     }
 }
-
+//////////////////////////////////////////////////////////////////////////////
 ConfigMgr::ConfigMgr()
 {
     /* @todo */
-    this->_desktop_bgimg.width = 0;
-    this->_desktop_bgimg.height = 0;
-    this->_desktop_bgimg.graph = nullptr;
-
-    this->_lock_bgimg.width = 0;
-    this->_lock_bgimg.height = 0;
-    this->_lock_bgimg.graph = nullptr;
 }
 
-Graph ConfigMgr::DesktopBgImg()
+void ConfigMgr::Load()
 {
-    return this->_desktop_bgimg;
 }
-
-Graph ConfigMgr::LockBgImg()
-{
-    return this->_lock_bgimg;
-}
-
+//////////////////////////////////////////////////////////////////////////////
 FileMgr::FileMgr()
 {
 }
@@ -227,3 +289,13 @@ FileMgr::~FileMgr()
 void FileMgr::SaveAll()
 {
 }
+
+void FileMgr::Load()
+{
+}
+
+void FileMgr::Close()
+{
+    this->SaveAll();
+}
+//////////////////////////////////////////////////////////////////////////////

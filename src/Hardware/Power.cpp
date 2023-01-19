@@ -10,7 +10,7 @@ hw_timer_t *power_timer = nullptr;
 
 void Key_Power_TimerIntr(void)
 {
-    hardwareio_mgr.Shutdown();
+    hardwareio_mgr.Close();
     Power_Off();
 }
 

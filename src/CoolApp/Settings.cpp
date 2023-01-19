@@ -8,7 +8,7 @@
 Settings::Settings() : AppBase()
 {
     this->_app_data_package.app_name = "Settings";
-    this->_app_data_package.icon = Graph(APP_ICON_WIDTH, APP_ICON_HEIGHT, (uint16_t*)gImage_Settings);
+    this->_app_data_package.icon = Graph_t(APP_ICON_WIDTH, APP_ICON_HEIGHT, (uint16_t*)gImage_Settings);
 }
 
 Settings::~Settings()

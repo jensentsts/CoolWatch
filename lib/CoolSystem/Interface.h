@@ -17,10 +17,16 @@
 #include "lvgl.h"
 #include "CoolWidgets.h"
 
+struct TransferObj
+{
+    lv_dir_t dir;
+    lv_dir_t area;
+};
+
 class InterfaceBase : public CoolWidget
 {
 public:
-    std::map<lv_dir_t, InterfaceBase *> transfer;
+    std::map<TransferObj, InterfaceBase *> transfer;
     lv_obj_t *GetActiveLvObj(); // 获取活动对象，例如被点击的卡片
     template <typename t>
     void SetActiveObj(t obj);
@@ -32,7 +38,7 @@ public:
 class Desktop : public InterfaceBase
 {
 private:
-    Graph *_bgimg;
+    Graph_t *_bgimg;
     lv_obj_t *_bgimg_disp;
     lv_obj_t *_apps_disp;
 
@@ -112,6 +118,15 @@ public:
     ~StopAnimation();
     lv_obj_t *Show();
     bool isFinal();
+};
+
+class AppInterface : public InterfaceBase
+{
+
+public:
+    AppInterface();
+    lv_obj_t *Show();
+
 };
 
 #endif // __Interface_h

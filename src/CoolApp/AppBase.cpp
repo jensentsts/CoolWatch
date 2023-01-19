@@ -2,13 +2,13 @@
 #include "lvgl.h"
 #include "SysConf.h"
 
-AppDataPackage::AppDataPackage()
+AppPackageData_t::AppPackageData_t()
 {
     this->app_name = "Untitled";
-    this->icon = Graph();
+    this->icon = Graph_t();
 }
 
-AppDataPackage::AppDataPackage(std::string app_name, Graph icon)
+AppPackageData_t::AppPackageData_t(std::string app_name, Graph_t icon)
 {
     this->app_name = app_name;
     this->icon = icon;
@@ -17,17 +17,22 @@ AppDataPackage::AppDataPackage(std::string app_name, Graph icon)
 AppBase::AppBase()
 {
     this->_root = nullptr;
-    this->_app_data_package = AppDataPackage();
+    this->_app_data_package = AppPackageData_t();
 }
 
-AppBase::AppBase(AppDataPackage *pkg)
+AppBase::AppBase(AppPackageData_t pkg)
 {
     this->_root = nullptr;
-    this->_app_data_package = *pkg;
+    this->_app_data_package = pkg;
 }
 
 AppBase::~AppBase()
 {
+}
+
+AppPackageData_t* AppBase::GetDataPackage()
+{
+    return &this->_app_data_package;
 }
 
 lv_obj_t *AppBase::Start()

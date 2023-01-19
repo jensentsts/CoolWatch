@@ -33,7 +33,9 @@ static lv_color_t buf_1[DISP_BUF_SIZE];
  */
 class MgrBase
 {
-    // Nothing here, for rights in Resource.
+public:
+    virtual void Load() = 0;
+    virtual void Close() = 0;
 };
 
 /**
@@ -48,9 +50,14 @@ private:
 
     bool _compass_active;
 
+    bool _has_booted;
+
 public:
     HardwareIOMgr();
     ~HardwareIOMgr();
+
+    void Load();
+    void Close();
 
     void ScreenFlush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p);
     void ScreenTouchRead(lv_indev_drv_t *indev_driver, lv_indev_data_t *data);
@@ -61,11 +68,9 @@ public:
     uint16_t Compass_GetXData();
     uint16_t Compass_GetYData();
     uint16_t Compass_GetZData();
-
-    void Shutdown();
 };
 
-struct AppDataPackage; // 声明一下，不然报错
+struct AppDataPackage_t; // 声明一下，不然报错
 
 /**
  * @brief App管理器
@@ -73,13 +78,35 @@ struct AppDataPackage; // 声明一下，不然报错
 class AppMgr : public MgrBase
 {
 private:
-    std::vector<AppDataPackage> _app_list;
+    std::vector<AppBase> _app_list;
 
 public:
     AppMgr(/* args */);
     ~AppMgr();
-    const AppDataPackage* operator[] (size_t index);
+    void Load();
+    void Close();
+    const AppDataPackage_t *operator[](size_t index);
     size_t length();
+};
+
+enum TaskCategory_t
+{
+
+};
+
+/**
+ * @brief 任务管理器
+ */
+class TaskMgr : public MgrBase
+{
+private:
+public:
+    TaskMgr();
+    void Load();
+    void Close();
+
+    void CreateTask();
+    void TerminateTask();
 };
 
 /**
@@ -95,7 +122,7 @@ private:
     Cards _cards;
     TopBar _topbar;
 
-    InterfaceBase *_currentDisplay;
+    std::vector<InterfaceBase *> _currentDisplay;
     lv_obj_t *_app_root;
     size_t _app_index;
     void _StartAnimationPlay();
@@ -104,23 +131,24 @@ private:
 public:
     InterfaceMgr(/* args */);
     ~InterfaceMgr();
-    void Show();
-    void Hide();
+    void Load();
+    void Close();
     void StartApp(size_t app_index, lv_obj_t *app_root);
     void StopApp();
+    void Transfer(lv_point_t point, lv_dir_t dir);
+    void Transfer(std::string); // 强制切换
 };
 
 class ConfigMgr : public MgrBase
 {
 private:
-    Graph _desktop_bgimg;
-    Graph _lock_bgimg;
+    std::string _json;
 
 public:
     ConfigMgr();
-
-    Graph DesktopBgImg();
-    Graph LockBgImg();
+    void Load();
+    void Close();
+    /* @todo jsoncpp */
 };
 
 /**
@@ -134,8 +162,11 @@ public:
     FileMgr(/* args */);
     ~FileMgr();
     void SaveAll();
+    void Load();
+    void Close();
 };
 
+extern TaskMgr task_mgr;
 extern AppMgr app_mgr;
 extern HardwareIOMgr hardwareio_mgr;
 extern InterfaceMgr interface_mgr;
