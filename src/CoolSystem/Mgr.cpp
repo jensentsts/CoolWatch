@@ -13,6 +13,7 @@
 
 #include "Graph.h"
 #include "SysConf.h"
+#include "img.h"
 #include "Hardware.h"
 #include "CoolApp.h"
 #include "Interface.h"
@@ -162,12 +163,12 @@ AppPackageMgr::AppPackageMgr()
 
 void AppPackageMgr::Load()
 {
-    this->_app_vector.clear();
-    this->_app_vector.push_back(Settings());
-    this->_app_map.clear();
-    for (size_t i = 0; i < this->_app_vector.size(); ++i)
+    this->_app_arr.push_back(Settings());
+    decltype(this->_app_arr)::iterator iter = this->_app_arr.begin();
+    while (iter != this->_app_arr.end())
     {
-        this->_app_map[this->_app_vector[i].GetDataPackage()->package_name] = &this->_app_vector[i];
+        this->_apps[iter->GetDataPackage()["package_name"].asString()] = (AppBase *)&(*iter);
+        iter++;
     }
 }
 
@@ -175,23 +176,9 @@ void AppPackageMgr::Close()
 {
 }
 
-inline AppBase *AppPackageMgr::operator[](std::string package_name)
+Resource AppPackageMgr::GetAppPackageArray() const
 {
-    return this->_app_map[package_name];
-}
-
-AppBase *AppPackageMgr::operator[](size_t index)
-{
-    if (index >= this->_app_map.size())
-    {
-        return nullptr;
-    }
-    return &this->_app_vector[index];
-}
-
-inline size_t AppPackageMgr::size()
-{
-    return this->_app_vector.size();
+    return this->_apps;
 }
 //////////////////////////////////////////////////////////////////////////////
 
@@ -209,7 +196,7 @@ void TaskRunner(void *arg)
         app->Loop();
     } while (app->GetStatue() == RUNNING);
     app->Stop();
-    task_mgr.TerminateApp(app->GetDataPackage()->package_name);
+    task_mgr.TerminateApp(app->GetDataPackage()["package_name"].asString());
 }
 
 TaskMgr::TaskMgr()
@@ -228,15 +215,16 @@ void TaskMgr::Close()
  * @brief 启动app
  * @param package_name app包名
  */
-void TaskMgr::StartApp(std::string package_name)
+void TaskMgr::StartApp(AppBase *app_pointer)
 {
+    const std::string &package_name = app_pointer->GetDataPackage()["package_name"].asString();
     // 任务已创建则不重复创建
     if (this->_running_app.find(package_name) != this->_running_app.end())
     {
         return;
     }
     TaskHandle_t handle;
-    AppBase *app = app_package_mgr[package_name];
+    AppBase *app = (AppBase *)app_package_mgr.GetAppPackageArray()[package_name].asPointer();
     xTaskCreate(TaskRunner,
                 package_name.c_str(),
                 APP_STACK_SIZE,
@@ -272,83 +260,36 @@ void TaskMgr::ActivityMonitor()
 //////////////////////////////////////////////////////////////////////////////
 InterfaceMgr::InterfaceMgr()
 {
-    this->_app_root = nullptr;
 }
 
 void InterfaceMgr::_StartAnimationPlay()
 {
-    // 防止bug
-    this->_desktop.Hide();
-    this->_cards.Hide();
-    this->_lock.Hide();
-    this->_stop_animation.Hide();
-    this->_currentDisplay.clear();
-    this->_currentDisplay.push_back(&this->_start_animation);
-    this->_start_animation.Show();
 }
 
 void InterfaceMgr::_StopAnimationPlay()
 {
-    // 防止bug
-    this->_desktop.Hide();
-    this->_cards.Hide();
-    this->_lock.Hide();
-    this->_start_animation.Hide();
-    if (this->_app_root != nullptr)
-    {
-        lv_obj_del(this->_app_root);
-    }
-    this->_currentDisplay.clear();
-    this->_currentDisplay.push_back(&this->_stop_animation);
-    this->_stop_animation.Show();
 }
 
 void InterfaceMgr::Load()
 {
-    this->_start_animation.Show();
+    this->_interface_arr.push_back(Desktop());
+    this->_interface_arr.push_back(TopBar());
+    this->_interface_arr.push_back(Cards());
+    this->_interface_arr.push_back(MainInterface());
+    this->_interface_arr.push_back(Lock());
+    decltype(this->_interface_arr)::iterator iter = this->_interface_arr.begin();
+    while (iter != this->_interface_arr.end())
+    {
+        this->_interfaces[iter->resource["package_name"].asString()] = (InterfaceBase *)&(*iter);
+    }
 }
 
 void InterfaceMgr::Close()
 {
 }
 
-void InterfaceMgr::Transfer(lv_point_t point, lv_dir_t dir)
+void InterfaceMgr::Transfer(std::string interface_package_name)
 {
-    // @todo
-    TransferObj transfer_obj;
-    if (point.y < GESTURE_MARGIN)
-    {
-        transfer_obj.area = LV_DIR_TOP;
-    }
-    else if (point.y > HEIGHT - GESTURE_MARGIN)
-    {
-        transfer_obj.area = LV_DIR_BOTTOM;
-    }
-    else if (point.x < GESTURE_MARGIN)
-    {
-        transfer_obj.area = LV_DIR_LEFT;
-    }
-    else if (point.x > WIDTH - GESTURE_MARGIN)
-    {
-        transfer_obj.area = LV_DIR_RIGHT;
-    }
-    else
-    {
-        transfer_obj.area = LV_DIR_ALL;
-    }
-    transfer_obj.dir = dir;
-}
-
-void InterfaceMgr::Transfer(std::string)
-{
-}
-
-void InterfaceMgr::StopApp()
-{
-    if (this->_app_root == nullptr)
-    {
-        return;
-    }
 }
 //////////////////////////////////////////////////////////////////////////////
 ResourceMgr::ResourceMgr()
@@ -358,9 +299,15 @@ ResourceMgr::ResourceMgr()
 void ResourceMgr::Load()
 {
     // @todo
-    config["SysInfo"]["Name"] = "CoolWatch";
-    config["SysInfo"]["Version"] = "0.0.1";
-    config["SysInfo"]["BatteryStatue"] = 0;
+    resource["SysInfo"]["Name"] = "CoolWatch";
+    resource["SysInfo"]["Version"] = "0.0.1";
+    resource["App"]["Settings"]["icon"] = gImage_Settings;
+    resource["Interface"]["Desktop"]["background_img"] = gImage_desktopImg;
+}
+
+void ResourceMgr::SaveAll()
+{
+    // @todo
 }
 
 void ResourceMgr::Close()
@@ -368,8 +315,9 @@ void ResourceMgr::Close()
     this->SaveAll();
 }
 
-void ResourceMgr::SaveAll()
+template <typename IndexType>
+Resource ResourceMgr::operator[](IndexType index)
 {
-    // @todo
+    return this->resource[index];
 }
 //////////////////////////////////////////////////////////////////////////////

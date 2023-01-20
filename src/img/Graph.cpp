@@ -1,15 +1,11 @@
 #include "Graph.h"
+#include "Resource.h"
 
-Graph_t::Graph_t()
+Resource CreateGraph(size_t width/* = 0*/, size_t height/* = 0*/, uint16_t *graph/* = nullptr*/)
 {
-    this->width = 0;
-    this->height = 0;
-    this->graph = nullptr;
-}
-
-Graph_t::Graph_t(size_t w, size_t h, uint16_t *graph)
-{
-    this->width = w;
-    this->height = h;
-    this->graph = graph;
+    Resource res;
+    res["width"] = width;
+    res["height"] = height;
+    res["graph"] = graph;
+    return res;
 }

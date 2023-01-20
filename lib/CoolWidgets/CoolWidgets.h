@@ -15,24 +15,25 @@
 #include "lvgl.h"
 #include <string>
 #include <vector>
-#include "AsResource.h"
+#include "Resource.h"
 #include "Graph.h"
+#include "AppBase.h"
 
 /**
  * @brief 组件基础
  */
-class CoolWidget : public Resource
+class CoolWidget
 {
 protected:
     lv_obj_t *_root;
 
 public:
-    std::string name;
+    Resource resource;
 
     CoolWidget();
     ~CoolWidget();
-    lv_obj_t *Show(lv_obj_t *father); // Create obj and show; no animation
-    void Hide();                      // Delete obj and hide; no animation
+    lv_obj_t *Show(lv_obj_t *father); // Create obj and show; @todo animation
+    void Hide();                      // Delete obj and hide; @todo animation
 };
 
 class Card : public CoolWidget
@@ -44,16 +45,16 @@ protected:
     lv_obj_t *_content_disp;
     std::vector<lv_obj_t *> _content_container_disp;
 
-    static lv_style_t _label_shadow;
+    static lv_style_t _label_shadow;    // 用于实现类似于加粗的效果
 
 public:
     Card();
     lv_obj_t *Show(lv_obj_t *father);
 
-    std::string title;
-    Graph_t *title_icon;
-    std::vector<std::string> container_text;
-    CoolWidget *container_widget;
+    //std::string title;
+    //Graph *title_icon;
+    //std::vector<std::string> container_text;
+    //CoolWidget *container_widget;
 };
 
 class Desktop_AppIcon : public CoolWidget
@@ -61,13 +62,12 @@ class Desktop_AppIcon : public CoolWidget
 protected:
     lv_obj_t *_app_icon_disp;
     lv_obj_t *_app_name_disp;
-    std::string _app_name;
-    const Graph_t* _app_icon;
 
 public:
     Desktop_AppIcon();
-    void SetIcon(const Graph_t *app_icon);
-    void SetName(std::string app_name);
+    void SetIcon(Resource& icon);
+    void SetTitle(std::string app_title);
+    void SetAppPointer(AppBase* app_pointer);
     lv_obj_t *Show(lv_obj_t *father);
 };
 

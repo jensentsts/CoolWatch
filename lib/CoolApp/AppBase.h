@@ -15,20 +15,21 @@
 #include "lvgl.h"
 
 #include "Graph.h"
-#include "AsResource.h"
+#include "Resource.h"
 #include "SysConf.h"
 #include "hardware.h"
 
 struct Graph_t;
 
-struct AppPackageData_t
-{
-    std::string package_name = "Untitled";
-    std::string app_title = "Untitled";
-    Graph_t icon;
-    AppPackageData_t();
-    AppPackageData_t(std::string package_name, std::string app_title, Graph_t icon);
-};
+/**
+ * @brief Create a App Package Data object
+ *
+ * @param package_name 包名
+ * @param app_title app标题名
+ * @param icon 图标
+ * @return Resource 返回格式：{ "package_name": [String]package_name, "app_title": [String]app_title, "icon": [graph object], "app_pointer": [Pointer]nullptr }
+ */
+Resource CreateAppPackageData(std::string package_name = "Unknown", std::string app_title = "Untitled", Resource icon = CreateGraph(), void* app_pointer = nullptr);
 
 // app运行状态
 enum AppRuntimeStatue
@@ -37,21 +38,21 @@ enum AppRuntimeStatue
     RUNNING // 运行时（Loop()）
 };
 
-class AppBase : public Resource
+class AppBase
 {
 protected:
     lv_obj_t *_root;
     lv_obj_t *_container;
     lv_obj_t *_title_container;
     lv_obj_t *_title_disp;
-    AppPackageData_t _app_data_package;
+    Resource _app_data_package;
     AppRuntimeStatue _statue;
 
 public:
     AppBase();
-    AppBase(AppPackageData_t);
+    AppBase(Resource);
     ~AppBase();
-    AppPackageData_t *GetDataPackage();
+    Resource GetDataPackage() const;
     AppRuntimeStatue GetStatue();
     /**
      * @brief app启动

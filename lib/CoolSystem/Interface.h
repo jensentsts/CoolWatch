@@ -13,20 +13,23 @@
 #define __Interface_h
 
 #include <map>
-#include "AsResource.h"
+#include "Resource.h"
 #include "lvgl.h"
 #include "CoolWidgets.h"
-
-struct TransferObj
-{
-    lv_dir_t dir;
-    lv_dir_t area;
-};
 
 class InterfaceBase : public CoolWidget
 {
 public:
-    std::map<TransferObj, InterfaceBase *> transfer;
+    template<typename IndexType>
+    Resource& operator[](IndexType);
+};
+
+/**
+ * @brief 主界面，显示一些必要信息，例如时间、天气、QQ与微信通知数等
+ */
+class MainInterface : public InterfaceBase
+{
+public:
 };
 
 /**
@@ -36,7 +39,6 @@ class Desktop : public InterfaceBase
 {
 private:
     lv_obj_t *_bgimg_disp;
-    std::vector<Desktop_AppIcon> _icons;
 
 public:
     Desktop();

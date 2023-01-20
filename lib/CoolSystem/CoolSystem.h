@@ -11,7 +11,7 @@
 #ifndef __CoolSystem_h
 #define __CoolSystem_h
 
-#include "AsResource.h"
+#include "Resource.h"
 #include "SysConf.h"
 #include "Graph.h"
 #include "Mgr.h"

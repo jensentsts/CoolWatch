@@ -1,34 +1,33 @@
+#include "AppBase.h"
 
 #include "Graph.h"
 #include "SysConf.h"
-#include "AppBase.h"
 #include "lvgl.h"
+#include "Resource.h"
 
-AppPackageData_t::AppPackageData_t()
+Resource CreateAppPackageData(std::string package_name/* = "Unknown"*/, std::string app_title/* = "Untitled"*/, Resource icon/* = CreateGraph()*/, void *app_pointer)
 {
-    this->package_name = "Untitled";
-    this->app_title = "Untitled";
-    this->icon = Graph_t();
-}
-
-AppPackageData_t::AppPackageData_t(std::string package_name, std::string app_name, Graph_t icon)
-{
-    this->package_name = package_name;
-    this->app_title = app_name;
-    this->icon = icon;
+    Resource res;
+    res["package_name"] = package_name;
+    res["app_pointer"] = app_pointer;
+    res["app_title"] = app_title;
+    res["icon"] = icon;
+    return res;
 }
 
 AppBase::AppBase()
 {
     this->_root = nullptr;
-    this->_app_data_package = AppPackageData_t();
     this->_statue = READY;
+    this->_app_data_package = CreateAppPackageData();
+    this->_app_data_package["app_title"] = this;
 }
 
-AppBase::AppBase(AppPackageData_t pkg)
+AppBase::AppBase(Resource pkg)
 {
     this->_root = nullptr;
     this->_app_data_package = pkg;
+    this->_app_data_package["app_title"] = this;
     this->_statue = READY;
 }
 
@@ -36,9 +35,9 @@ AppBase::~AppBase()
 {
 }
 
-AppPackageData_t *AppBase::GetDataPackage()
+Resource AppBase::GetDataPackage() const
 {
-    return &this->_app_data_package;
+    return this->_app_data_package;
 }
 
 AppRuntimeStatue AppBase::GetStatue()
@@ -66,7 +65,7 @@ lv_obj_t *AppBase::Start()
 
     // _title_disp
     this->_title_disp = lv_label_create(this->_title_container);
-    lv_label_set_text(this->_title_disp, this->_app_data_package.app_title.c_str());
+    lv_label_set_text(this->_title_disp, this->_app_data_package["app_title"].asString().c_str());
     lv_obj_align(this->_title_disp, LV_ALIGN_TOP_MID, 0, 0);
 
     // _container

@@ -34,7 +34,7 @@ static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf_1[DISP_BUF_SIZE];
 
 /**
- * @brief 用于 Resource 的派生类赋予 MgrBase 派生类权限
+ * @brief Mgr基础类，定义Mgr的基本行为
  */
 class MgrBase
 {
@@ -80,17 +80,15 @@ public:
 class AppPackageMgr : public MgrBase
 {
 private:
-    std::map<std::string, AppBase*> _app_map;
-    std::vector<AppBase> _app_vector;
+    std::vector<AppBase> _app_arr;
+    Resource _apps;
 
 public:
     AppPackageMgr(/* args */);
     void Load();
     void Close();
 
-    AppBase *operator[](std::string package_name);
-    AppBase *operator[](size_t index);
-    size_t size();
+    Resource GetAppPackageArray() const;
 };
 
 /**
@@ -100,14 +98,14 @@ public:
 class TaskMgr : public MgrBase
 {
 private:
-    std::map<std::string, TaskHandle_t> _running_app;
+    std::map<std::string, TaskHandle_t> _running_app; // 此处不用 Resource
 
 public:
     TaskMgr();
     void Load();
     void Close();
 
-    void StartApp(std::string package_name);
+    void StartApp(AppBase *app_pointer);
     void TerminateApp(std::string package_name);
     void ActivityMonitor(); // 系统活跃性检测（例如ESP睡眠、息屏等）
 };
@@ -118,17 +116,15 @@ public:
 class InterfaceMgr : public MgrBase
 {
 private:
-    StartAnimation _start_animation;
-    StopAnimation _stop_animation;
-    Lock _lock;
-    Desktop _desktop;
-    Cards _cards;
-    TopBar _topbar;
+    // 手势判断
+    lv_obj_t *_left_side_bar;
+    lv_obj_t *_right_side_bar;
+    lv_obj_t *_top_side_bar;
+    lv_obj_t *_bottom_side_bar;
 
-    // @todo
-    std::vector<InterfaceBase *> _currentDisplay;
-    lv_obj_t *_app_root;
-    size_t _app_index;
+    std::vector<InterfaceBase> _interface_arr;
+    Resource _interfaces;
+
     void _StartAnimationPlay();
     void _StopAnimationPlay();
 
@@ -136,30 +132,24 @@ public:
     InterfaceMgr();
     void Load();
     void Close();
-    void AppStart(std::string package_name);
-    void StopApp();
-    void Transfer(lv_point_t point, lv_dir_t dir);
-    void Transfer(std::string); // 强制切换
+    void Transfer(std::string interface_package_name);
 };
 
 /**
- * @brief 资源管理器
+ * @brief 资源管理器（理论上权限最高……）
  */
 class ResourceMgr : public MgrBase
 {
 private:
-
 public:
+    Resource resource;
+
     ResourceMgr();
     void Load();
     void Close();
     void SaveAll();
-    Json::Value config;
-    // Todo: 实现资源索引！！！
-    // Todo: 实现资源索引！！！
-    // Todo: 实现资源索引！！！
-    // Todo: 实现资源索引！！！
-    // Todo: 实现资源索引！！！
+    template <typename IndexType>
+    Resource operator[](IndexType index);
 };
 
 extern TaskMgr task_mgr;

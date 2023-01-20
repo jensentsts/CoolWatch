@@ -4,15 +4,31 @@
 #include "CoolWidgets.h"
 #include "lvgl.h"
 
-void AppIcon_OnClick(lv_event_t * arg){
-    std::string package_name = *(std::string*)arg;
-    task_mgr.StartApp(package_name);
+template <typename IndexType>
+Resource &InterfaceBase::operator[](IndexType index)
+{
+    return this->resource[index];
+}
+
+/**
+ * @brief 在桌面上点击app图标时，启动app
+ *
+ * @param arg app_pointer
+ */
+void Desktop_AppIcon_OnClick(lv_event_t *arg)
+{
+    AppBase *app_pointer = (AppBase *)arg;
+    task_mgr.StartApp(app_pointer);
     // @todo animation
 }
 
 Desktop::Desktop() : InterfaceBase()
 {
     this->_bgimg_disp = nullptr;
+    this->resource["package_name"] = "Desktop";
+    this->resource["transfer"][LV_DIR_LEFT] = "Cards";
+    this->resource["transfer"][LV_DIR_RIGHT] = "MainInterface";
+    this->resource["transfer"][LV_DIR_BOTTOM] = "TopBar";
 }
 
 void Desktop::Show()
@@ -23,23 +39,24 @@ void Desktop::Show()
     }
 
     InterfaceBase::Show(nullptr);
+    // @todo background
     Desktop_AppIcon new_icon;
-    for (size_t i = 0; i < app_package_mgr.size(); ++i)
+    Resource app_package_array = app_package_mgr.GetAppPackageArray();
+    for (size_t i = 0; i < app_package_array.size(); ++i)
     {
-        new_icon.SetName(app_package_mgr[i]->GetDataPackage()->app_title);
-        new_icon.SetIcon(&app_package_mgr[i]->GetDataPackage()->icon);
-        this->_icons.push_back(new_icon);
-        lv_obj_add_event_cb(new_icon.Show(this->_root), 
-                            AppIcon_OnClick, 
-                            LV_EVENT_CLICKED, 
-                            (void*)&app_package_mgr[i]->GetDataPackage()->package_name);
+        new_icon.SetTitle(app_package_array[i]["app_title"].asString());
+        new_icon.SetIcon(app_package_array[i]["icon"]["graph"]);
+        lv_obj_add_event_cb(new_icon.Show(this->_root),
+                            Desktop_AppIcon_OnClick,
+                            LV_EVENT_CLICKED,
+                            (void *)app_package_array[i]["app_pointer"].asPointer());
         // @todo animation
     }
-    
 }
 
 Cards::Cards() : InterfaceBase()
 {
+    this->resource["package_name"] = "Cards";
 }
 
 Cards::~Cards()
@@ -48,6 +65,7 @@ Cards::~Cards()
 
 Lock::Lock() : InterfaceBase()
 {
+    this->resource["package_name"] = "Lock";
 }
 
 Lock::~Lock()
@@ -71,6 +89,7 @@ void Lock::Show()
 
 TopBar::TopBar()
 {
+    this->resource["package_name"] = "TopBar";
 }
 
 TopBar::~TopBar()
@@ -84,6 +103,7 @@ void TopBar::Show()
 StartAnimation::StartAnimation() : InterfaceBase()
 {
     this->_label = nullptr;
+    this->resource["package_name"] = "StartAnimation";
 }
 
 StartAnimation::~StartAnimation()
@@ -114,6 +134,7 @@ bool StartAnimation::isFinal()
 
 StopAnimation::StopAnimation() : InterfaceBase()
 {
+    this->resource["package_name"] = "StopAnimation";
 }
 
 StopAnimation::~StopAnimation()
