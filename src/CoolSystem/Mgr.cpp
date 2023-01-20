@@ -6,6 +6,10 @@
 #include <map>
 #include <utility>
 #include <arduino.h>
+#include "lvgl.h"
+#include "TFT_eSPI.h"
+#include "FT6336U.h"
+#include "json/json.h"
 
 #include "Graph.h"
 #include "SysConf.h"
@@ -18,8 +22,7 @@ TaskMgr task_mgr;
 AppPackageMgr app_package_mgr;
 HardwareIOMgr hardwareio_mgr;
 InterfaceMgr interface_mgr;
-ConfigMgr config_mgr;
-FileMgr file_mgr;
+ResourceMgr resource_mgr;
 
 //////////////////////////////////////////////////////////////////////////////
 HardwareIOMgr::HardwareIOMgr()
@@ -67,11 +70,10 @@ void HardwareIOMgr::Load()
 #if DEBUG == 1
     Serial.printf("Start to Boot. \r\n");
 #endif
-    file_mgr.Load();
+    resource_mgr.Load();
     interface_mgr.Load();
     app_package_mgr.Load();
     task_mgr.Load();
-    config_mgr.Load();
     interface_mgr.Transfer("StartAnimation");
     this->_has_booted = true;
 }
@@ -79,7 +81,7 @@ void HardwareIOMgr::Load()
 void HardwareIOMgr::Close()
 {
     interface_mgr.Close();
-    file_mgr.SaveAll();
+    resource_mgr.SaveAll();
 }
 
 void HardwareIOMgr::Compass_Cmd(bool cmd)
@@ -349,33 +351,25 @@ void InterfaceMgr::StopApp()
     }
 }
 //////////////////////////////////////////////////////////////////////////////
-ConfigMgr::ConfigMgr()
-{
-    /* @todo */
-}
-
-void ConfigMgr::Load()
+ResourceMgr::ResourceMgr()
 {
 }
 
-void ConfigMgr::Close()
+void ResourceMgr::Load()
 {
-}
-//////////////////////////////////////////////////////////////////////////////
-FileMgr::FileMgr()
-{
-}
-
-void FileMgr::SaveAll()
-{
+    // @todo
+    config["SysInfo"]["Name"] = "CoolWatch";
+    config["SysInfo"]["Version"] = "0.0.1";
+    config["SysInfo"]["BatteryStatue"] = 0;
 }
 
-void FileMgr::Load()
-{
-}
-
-void FileMgr::Close()
+void ResourceMgr::Close()
 {
     this->SaveAll();
+}
+
+void ResourceMgr::SaveAll()
+{
+    // @todo
 }
 //////////////////////////////////////////////////////////////////////////////

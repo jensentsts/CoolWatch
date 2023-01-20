@@ -12,7 +12,6 @@ void AppIcon_OnClick(lv_event_t * arg){
 
 Desktop::Desktop() : InterfaceBase()
 {
-    this->_bgimg = nullptr;
     this->_bgimg_disp = nullptr;
 }
 
@@ -36,6 +35,7 @@ void Desktop::Show()
                             (void*)&app_package_mgr[i]->GetDataPackage()->package_name);
         // @todo animation
     }
+    
 }
 
 Cards::Cards() : InterfaceBase()
@@ -56,6 +56,17 @@ Lock::~Lock()
 
 void Lock::Show()
 {
+    if (this->_root != nullptr)
+    {
+        return;
+    }
+    InterfaceBase::Show(nullptr);
+
+    // background
+
+    // time
+
+    // date
 }
 
 TopBar::TopBar()

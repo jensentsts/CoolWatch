@@ -20,9 +20,11 @@
 #include "lvgl.h"
 #include "TFT_eSPI.h"
 #include "FT6336U.h"
+#include "json/json.h"
 
 #include "Graph.h"
 #include "SysConf.h"
+
 #include "CoolApp.h"
 #include "Interface.h"
 #include "hardware.h"
@@ -98,7 +100,6 @@ public:
 class TaskMgr : public MgrBase
 {
 private:
-    //std::vector<std::pair<AppBase*, TaskHandle_t> > _running_app; // 正在运行中的app
     std::map<std::string, TaskHandle_t> _running_app;
 
 public:
@@ -124,6 +125,7 @@ private:
     Cards _cards;
     TopBar _topbar;
 
+    // @todo
     std::vector<InterfaceBase *> _currentDisplay;
     lv_obj_t *_app_root;
     size_t _app_index;
@@ -131,7 +133,7 @@ private:
     void _StopAnimationPlay();
 
 public:
-    InterfaceMgr(/* args */);
+    InterfaceMgr();
     void Load();
     void Close();
     void AppStart(std::string package_name);
@@ -140,37 +142,30 @@ public:
     void Transfer(std::string); // 强制切换
 };
 
-class ConfigMgr : public MgrBase
-{
-private:
-    std::string _json;
-
-public:
-    ConfigMgr();
-    void Load();
-    void Close();
-    /* @todo jsoncpp */
-};
-
 /**
- * @brief 负责USB、“文件”保存
+ * @brief 资源管理器
  */
-class FileMgr : public MgrBase
+class ResourceMgr : public MgrBase
 {
 private:
-    /* data */
+
 public:
-    FileMgr(/* args */);
-    void SaveAll();
+    ResourceMgr();
     void Load();
     void Close();
+    void SaveAll();
+    Json::Value config;
+    // Todo: 实现资源索引！！！
+    // Todo: 实现资源索引！！！
+    // Todo: 实现资源索引！！！
+    // Todo: 实现资源索引！！！
+    // Todo: 实现资源索引！！！
 };
 
 extern TaskMgr task_mgr;
 extern AppPackageMgr app_package_mgr;
 extern HardwareIOMgr hardwareio_mgr;
 extern InterfaceMgr interface_mgr;
-extern ConfigMgr config_mgr;
-extern FileMgr file_mgr;
+extern ResourceMgr resource_mgr;
 
 #endif // __Mgr_h

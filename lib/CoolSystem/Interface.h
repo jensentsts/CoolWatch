@@ -35,7 +35,6 @@ public:
 class Desktop : public InterfaceBase
 {
 private:
-    Graph_t *_bgimg;
     lv_obj_t *_bgimg_disp;
     std::vector<Desktop_AppIcon> _icons;
 
@@ -73,6 +72,9 @@ public:
     void SetActiveObj(size_t index);
 };
 
+/**
+ * @brief 顶部状态栏（时间、电量等）
+ */
 class TopBar : public InterfaceBase
 {
 private:
