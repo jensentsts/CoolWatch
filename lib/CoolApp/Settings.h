@@ -1,7 +1,7 @@
 /**
  * @file Settings.h
  * @author Jensentsts (jensentsts@163.com)
- * @brief 
+ * @brief “设置”App
  * @version 1.0.0
  * @date 2023-01-16
  * 

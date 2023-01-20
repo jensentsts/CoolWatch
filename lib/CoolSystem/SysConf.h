@@ -25,7 +25,7 @@
 // 手势操作
 #define GESTURE_MARGIN 16
 //////////////////////////////////////////////////////////////
-// App图标设置
+// App图标
 #define APP_ICON_WIDTH 128          // 图标数据宽度
 #define APP_ICON_HEIGHT 128         // 图标数据高度
 #define APP_ICON_RADIUS 12          // 圆角
@@ -33,12 +33,18 @@
 #define APP_ICON_PADDING 30         // 间隔
 #define APP_ICON_ITEMS_PADDING 4    // 图标与文字的间隔
 //////////////////////////////////////////////////////////////
-// App显示设置
+// App设置
 #define APP_TITLE_HEIGHT 20
+#define APP_SYS_PACKAGE_NAME_FORE "@"// 系统应用包名前缀
+#define APP_SYS_PRIORITY 3
+#define APP_STACK_SIZE 512
 //////////////////////////////////////////////////////////////
 // 一般图标设置
 #define ICON_WIDTH 200
 #define ICON_HEIGHT 200
+//////////////////////////////////////////////////////////////
+// 系统设置
+#define SYS_TICK_STOP_TIME 3000
 //////////////////////////////////////////////////////////////
 // 无图像等效替换字符
 #define NO_IMG_INFO ":("

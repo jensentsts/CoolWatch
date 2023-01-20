@@ -12,8 +12,9 @@
 #define __CoolSystem_h
 
 #include "AsResource.h"
+#include "SysConf.h"
+#include "Graph.h"
 #include "Mgr.h"
 #include "Interface.h"
-#include "Graph.h"
 
 #endif // __CoolSystem_h

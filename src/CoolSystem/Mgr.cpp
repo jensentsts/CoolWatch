@@ -3,13 +3,24 @@
 
 #include <vector>
 #include <string>
+#include <map>
+#include <utility>
 #include <arduino.h>
 
-#include "Hardware.h"
-#include "CoolApp.h"
-#include "hardware.h"
 #include "Graph.h"
 #include "SysConf.h"
+#include "Hardware.h"
+#include "CoolApp.h"
+#include "Interface.h"
+#include "AppBase.h"
+
+TaskMgr task_mgr;
+AppPackageMgr app_package_mgr;
+HardwareIOMgr hardwareio_mgr;
+InterfaceMgr interface_mgr;
+ConfigMgr config_mgr;
+FileMgr file_mgr;
+
 //////////////////////////////////////////////////////////////////////////////
 HardwareIOMgr::HardwareIOMgr()
 {
@@ -47,10 +58,6 @@ HardwareIOMgr::HardwareIOMgr()
     this->_has_booted = false;
 }
 
-HardwareIOMgr::~HardwareIOMgr()
-{
-}
-
 void HardwareIOMgr::Load()
 {
     if (this->_has_booted)
@@ -62,7 +69,7 @@ void HardwareIOMgr::Load()
 #endif
     file_mgr.Load();
     interface_mgr.Load();
-    app_mgr.Load();
+    app_package_mgr.Load();
     task_mgr.Load();
     config_mgr.Load();
     interface_mgr.Transfer("StartAnimation");
@@ -88,7 +95,7 @@ void HardwareIOMgr::Compass_Cmd(bool cmd)
     this->_compass_active = cmd;
 }
 
-void HardwareIOMgr::ScreenRotate(uint8_t r)
+inline void HardwareIOMgr::ScreenRotate(uint8_t r)
 {
     this->_screen.setRotation(r);
 }
@@ -127,44 +134,82 @@ void HardwareIOMgr::ScreenTouchRead(lv_indev_drv_t *indev_driver, lv_indev_data_
     data->point.y = last_y;
 }
 
-QMC5883L_DataPackage HardwareIOMgr::Compass_GetData()
+inline QMC5883L_DataPackage HardwareIOMgr::Compass_GetData()
 {
     return QMC5883L_GetData();
 }
 
-uint16_t HardwareIOMgr::Compass_GetXData()
+inline uint16_t HardwareIOMgr::Compass_GetXData()
 {
     return QMC5883L_GetXData();
 }
 
-uint16_t HardwareIOMgr::Compass_GetYData()
+inline uint16_t HardwareIOMgr::Compass_GetYData()
 {
     return QMC5883L_GetYData();
 }
 
-uint16_t HardwareIOMgr::Compass_GetZData()
+inline uint16_t HardwareIOMgr::Compass_GetZData()
 {
     return QMC5883L_GetZData();
 }
 //////////////////////////////////////////////////////////////////////////////
-AppMgr::AppMgr()
+AppPackageMgr::AppPackageMgr()
 {
 }
 
-AppMgr::~AppMgr()
+void AppPackageMgr::Load()
+{
+    this->_app_vector.clear();
+    this->_app_vector.push_back(Settings());
+    this->_app_map.clear();
+    for (size_t i = 0; i < this->_app_vector.size(); ++i)
+    {
+        this->_app_map[this->_app_vector[i].GetDataPackage()->package_name] = &this->_app_vector[i];
+    }
+}
+
+void AppPackageMgr::Close()
 {
 }
 
-void AppMgr::Load()
+inline AppBase *AppPackageMgr::operator[](std::string package_name)
 {
-    this->_app_list.clear();
-    this->_app_list.push_back(Settings());
+    return this->_app_map[package_name];
 }
 
-void AppMgr::Close()
+AppBase *AppPackageMgr::operator[](size_t index)
 {
+    if (index >= this->_app_map.size())
+    {
+        return nullptr;
+    }
+    return &this->_app_vector[index];
+}
+
+inline size_t AppPackageMgr::size()
+{
+    return this->_app_vector.size();
 }
 //////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @brief 在esp任务中运行App的函数
+ *
+ * @param arg 传入类型为AppBase*，指向某个App
+ */
+void TaskRunner(void *arg)
+{
+    AppBase *app = (AppBase *)arg;
+    app->Start();
+    do
+    {
+        app->Loop();
+    } while (app->GetStatue() == RUNNING);
+    app->Stop();
+    task_mgr.TerminateApp(app->GetDataPackage()->package_name);
+}
+
 TaskMgr::TaskMgr()
 {
 }
@@ -176,14 +221,56 @@ void TaskMgr::Load()
 void TaskMgr::Close()
 {
 }
+
+/**
+ * @brief 启动app
+ * @param package_name app包名
+ */
+void TaskMgr::StartApp(std::string package_name)
+{
+    // 任务已创建则不重复创建
+    if (this->_running_app.find(package_name) != this->_running_app.end())
+    {
+        return;
+    }
+    TaskHandle_t handle;
+    AppBase *app = app_package_mgr[package_name];
+    xTaskCreate(TaskRunner,
+                package_name.c_str(),
+                APP_STACK_SIZE,
+                app,
+                APP_SYS_PRIORITY,
+                &handle);
+    this->_running_app[package_name] = handle;
+}
+
+/**
+ * @brief 结束app任务
+ * @param package_name app包名
+ */
+void TaskMgr::TerminateApp(std::string package_name)
+{
+    // 任务未创建则退出
+    if (this->_running_app.find(package_name) == this->_running_app.end())
+    {
+        return;
+    }
+    vTaskDelete(this->_running_app[package_name]);
+}
+
+void TaskMgr::ActivityMonitor()
+{
+    // @todo
+    if (lv_disp_get_inactive_time(NULL) >= SYS_TICK_STOP_TIME)
+    {
+        TFTLCD_TickStop();
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////////
 InterfaceMgr::InterfaceMgr()
 {
     this->_app_root = nullptr;
-}
-
-InterfaceMgr::~InterfaceMgr()
-{
 }
 
 void InterfaceMgr::_StartAnimationPlay()
@@ -221,11 +308,11 @@ void InterfaceMgr::Load()
 
 void InterfaceMgr::Close()
 {
-
 }
 
 void InterfaceMgr::Transfer(lv_point_t point, lv_dir_t dir)
 {
+    // @todo
     TransferObj transfer_obj;
     if (point.y < GESTURE_MARGIN)
     {
@@ -252,13 +339,6 @@ void InterfaceMgr::Transfer(lv_point_t point, lv_dir_t dir)
 
 void InterfaceMgr::Transfer(std::string)
 {
-
-}
-
-void InterfaceMgr::StartApp(size_t app_index, lv_obj_t *app_root)
-{
-    this->_app_index = app_index;
-    this->_app_root = app_root;
 }
 
 void InterfaceMgr::StopApp()
@@ -277,12 +357,12 @@ ConfigMgr::ConfigMgr()
 void ConfigMgr::Load()
 {
 }
-//////////////////////////////////////////////////////////////////////////////
-FileMgr::FileMgr()
+
+void ConfigMgr::Close()
 {
 }
-
-FileMgr::~FileMgr()
+//////////////////////////////////////////////////////////////////////////////
+FileMgr::FileMgr()
 {
 }
 

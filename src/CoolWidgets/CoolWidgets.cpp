@@ -141,7 +141,7 @@ Desktop_AppIcon::Desktop_AppIcon()
     this->_app_icon = nullptr;
 }
 
-void Desktop_AppIcon::SetIcon(Graph_t *app_icon)
+void Desktop_AppIcon::SetIcon(const Graph_t *app_icon)
 {
     this->_app_icon = app_icon;
 }

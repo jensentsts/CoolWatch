@@ -1,16 +1,20 @@
+
+#include "Graph.h"
+#include "SysConf.h"
 #include "AppBase.h"
 #include "lvgl.h"
-#include "SysConf.h"
 
 AppPackageData_t::AppPackageData_t()
 {
-    this->app_name = "Untitled";
+    this->package_name = "Untitled";
+    this->app_title = "Untitled";
     this->icon = Graph_t();
 }
 
-AppPackageData_t::AppPackageData_t(std::string app_name, Graph_t icon)
+AppPackageData_t::AppPackageData_t(std::string package_name, std::string app_name, Graph_t icon)
 {
-    this->app_name = app_name;
+    this->package_name = package_name;
+    this->app_title = app_name;
     this->icon = icon;
 }
 
@@ -18,21 +22,28 @@ AppBase::AppBase()
 {
     this->_root = nullptr;
     this->_app_data_package = AppPackageData_t();
+    this->_statue = READY;
 }
 
 AppBase::AppBase(AppPackageData_t pkg)
 {
     this->_root = nullptr;
     this->_app_data_package = pkg;
+    this->_statue = READY;
 }
 
 AppBase::~AppBase()
 {
 }
 
-AppPackageData_t* AppBase::GetDataPackage()
+AppPackageData_t *AppBase::GetDataPackage()
 {
     return &this->_app_data_package;
+}
+
+AppRuntimeStatue AppBase::GetStatue()
+{
+    return this->_statue;
 }
 
 lv_obj_t *AppBase::Start()
@@ -55,7 +66,7 @@ lv_obj_t *AppBase::Start()
 
     // _title_disp
     this->_title_disp = lv_label_create(this->_title_container);
-    lv_label_set_text(this->_title_disp, this->_app_data_package.app_name.c_str());
+    lv_label_set_text(this->_title_disp, this->_app_data_package.app_title.c_str());
     lv_obj_align(this->_title_disp, LV_ALIGN_TOP_MID, 0, 0);
 
     // _container
@@ -63,14 +74,18 @@ lv_obj_t *AppBase::Start()
     lv_obj_set_width(this->_container, WIDTH);
     lv_obj_set_height(this->_container, HEIGHT - APP_TITLE_HEIGHT);
 
+    this->_statue = READY;
+
     return this->_root;
 }
 
 void AppBase::Loop()
 {
+    this->_statue = RUNNING;
 }
 
 void AppBase::Stop()
 {
     lv_obj_del(this->_root);
+    this->_statue = READY;
 }

@@ -62,11 +62,11 @@ protected:
     lv_obj_t *_app_icon_disp;
     lv_obj_t *_app_name_disp;
     std::string _app_name;
-    Graph_t* _app_icon;
+    const Graph_t* _app_icon;
 
 public:
     Desktop_AppIcon();
-    void SetIcon(Graph_t *app_icon);
+    void SetIcon(const Graph_t *app_icon);
     void SetName(std::string app_name);
     lv_obj_t *Show(lv_obj_t *father);
 };

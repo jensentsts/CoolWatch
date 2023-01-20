@@ -1,5 +1,5 @@
 
-#define DEBUG 1
+#define DEBUG 0
 
 #include <Arduino.h>
 
@@ -20,13 +20,10 @@ void setup() {
 void loop() {
     // @todo 睡眠管理
     // @todo 将时钟都放到小核里去
-    if (lv_disp_get_inactive_time(NULL) < 3000)
+    if (lv_disp_get_inactive_time(NULL) < SYS_TICK_STOP_TIME)
     {
         lv_timer_handler();
     }
-    else
-    {
-        TFTLCD_TickStop();
-    }
+    task_mgr.ActivityMonitor();
     delay(5);
 }

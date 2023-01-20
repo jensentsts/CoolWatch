@@ -15,12 +15,15 @@
 #include <vector>
 #include <string>
 #include <arduino.h>
+#include <map>
+#include <utility>
 #include "lvgl.h"
 #include "TFT_eSPI.h"
 #include "FT6336U.h"
 
-#include "CoolApp.h"
 #include "Graph.h"
+#include "SysConf.h"
+#include "CoolApp.h"
 #include "Interface.h"
 #include "hardware.h"
 
@@ -54,7 +57,6 @@ private:
 
 public:
     HardwareIOMgr();
-    ~HardwareIOMgr();
 
     void Load();
     void Close();
@@ -70,43 +72,43 @@ public:
     uint16_t Compass_GetZData();
 };
 
-struct AppDataPackage_t; // 声明一下，不然报错
-
 /**
- * @brief App管理器
+ * @brief App包管理器（CoolWatch上运行的应用相当于直接运行的安装包）
  */
-class AppMgr : public MgrBase
+class AppPackageMgr : public MgrBase
 {
 private:
-    std::vector<AppBase> _app_list;
+    std::map<std::string, AppBase*> _app_map;
+    std::vector<AppBase> _app_vector;
 
 public:
-    AppMgr(/* args */);
-    ~AppMgr();
+    AppPackageMgr(/* args */);
     void Load();
     void Close();
-    const AppDataPackage_t *operator[](size_t index);
-    size_t length();
-};
 
-enum TaskCategory_t
-{
-
+    AppBase *operator[](std::string package_name);
+    AppBase *operator[](size_t index);
+    size_t size();
 };
 
 /**
  * @brief 任务管理器
+ * @note 原则上讲权限最高
  */
 class TaskMgr : public MgrBase
 {
 private:
+    //std::vector<std::pair<AppBase*, TaskHandle_t> > _running_app; // 正在运行中的app
+    std::map<std::string, TaskHandle_t> _running_app;
+
 public:
     TaskMgr();
     void Load();
     void Close();
 
-    void CreateTask();
-    void TerminateTask();
+    void StartApp(std::string package_name);
+    void TerminateApp(std::string package_name);
+    void ActivityMonitor(); // 系统活跃性检测（例如ESP睡眠、息屏等）
 };
 
 /**
@@ -130,10 +132,9 @@ private:
 
 public:
     InterfaceMgr(/* args */);
-    ~InterfaceMgr();
     void Load();
     void Close();
-    void StartApp(size_t app_index, lv_obj_t *app_root);
+    void AppStart(std::string package_name);
     void StopApp();
     void Transfer(lv_point_t point, lv_dir_t dir);
     void Transfer(std::string); // 强制切换
@@ -160,14 +161,13 @@ private:
     /* data */
 public:
     FileMgr(/* args */);
-    ~FileMgr();
     void SaveAll();
     void Load();
     void Close();
 };
 
 extern TaskMgr task_mgr;
-extern AppMgr app_mgr;
+extern AppPackageMgr app_package_mgr;
 extern HardwareIOMgr hardwareio_mgr;
 extern InterfaceMgr interface_mgr;
 extern ConfigMgr config_mgr;

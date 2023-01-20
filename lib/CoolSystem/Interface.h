@@ -27,9 +27,6 @@ class InterfaceBase : public CoolWidget
 {
 public:
     std::map<TransferObj, InterfaceBase *> transfer;
-    lv_obj_t *GetActiveLvObj(); // 获取活动对象，例如被点击的卡片
-    template <typename t>
-    void SetActiveObj(t obj);
 };
 
 /**
@@ -40,7 +37,7 @@ class Desktop : public InterfaceBase
 private:
     Graph_t *_bgimg;
     lv_obj_t *_bgimg_disp;
-    lv_obj_t *_apps_disp;
+    std::vector<Desktop_AppIcon> _icons;
 
 public:
     Desktop();

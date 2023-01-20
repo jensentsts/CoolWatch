@@ -12,19 +12,29 @@
 #ifndef __AppBase_h
 #define __AppBase_h
 
-#include "AsResource.h"
 #include "lvgl.h"
-#include "hardware.h"
+
 #include "Graph.h"
+#include "AsResource.h"
+#include "SysConf.h"
+#include "hardware.h"
 
 struct Graph_t;
 
 struct AppPackageData_t
 {
-    std::string app_name = "Untitled";
+    std::string package_name = "Untitled";
+    std::string app_title = "Untitled";
     Graph_t icon;
     AppPackageData_t();
-    AppPackageData_t(std::string app_name, Graph_t icon);
+    AppPackageData_t(std::string package_name, std::string app_title, Graph_t icon);
+};
+
+// app运行状态
+enum AppRuntimeStatue
+{
+    READY,  // 已就绪，（程序加载完毕后、程序已退出）
+    RUNNING // 运行时（Loop()）
 };
 
 class AppBase : public Resource
@@ -35,16 +45,18 @@ protected:
     lv_obj_t *_title_container;
     lv_obj_t *_title_disp;
     AppPackageData_t _app_data_package;
+    AppRuntimeStatue _statue;
 
 public:
     AppBase();
     AppBase(AppPackageData_t);
     ~AppBase();
-    AppPackageData_t* GetDataPackage();
+    AppPackageData_t *GetDataPackage();
+    AppRuntimeStatue GetStatue();
     /**
      * @brief app启动
      * @note Start()只会在app启动时运行一次
-     * 
+     *
      * @return lv_obj_t* 返回this->_root
      */
     lv_obj_t *Start();
