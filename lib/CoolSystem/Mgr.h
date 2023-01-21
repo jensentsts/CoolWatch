@@ -124,6 +124,7 @@ private:
 
     std::vector<InterfaceBase> _interface_arr;
     Resource _interfaces;
+    std::string _on_show;
 
     void _StartAnimationPlay();
     void _StopAnimationPlay();
@@ -132,30 +133,14 @@ public:
     InterfaceMgr();
     void Load();
     void Close();
-    void Transfer(std::string interface_package_name);
-};
-
-/**
- * @brief 资源管理器（理论上权限最高……）
- */
-class ResourceMgr : public MgrBase
-{
-private:
-public:
-    Resource resource;
-
-    ResourceMgr();
-    void Load();
-    void Close();
-    void SaveAll();
-    template <typename IndexType>
-    Resource operator[](IndexType index);
+    void Transfer(std::string package_name);
+    static void SideBarGesture(lv_event_t *event);
 };
 
 extern TaskMgr task_mgr;
 extern AppPackageMgr app_package_mgr;
 extern HardwareIOMgr hardwareio_mgr;
 extern InterfaceMgr interface_mgr;
-extern ResourceMgr resource_mgr;
+extern Resource resource_root;
 
 #endif // __Mgr_h

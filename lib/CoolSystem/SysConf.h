@@ -22,8 +22,8 @@
 #define BGIMG_WIDTH 240
 #define BGIMG_HEIGHT 280
 //////////////////////////////////////////////////////////////
-// 手势操作
-#define GESTURE_MARGIN 16
+// 手势操作边距
+#define GESTURE_OPERATION_MARGIN 16
 //////////////////////////////////////////////////////////////
 // App图标
 #define APP_ICON_WIDTH 128          // 图标数据宽度

@@ -22,6 +22,8 @@ class InterfaceBase : public CoolWidget
 public:
     template<typename IndexType>
     Resource& operator[](IndexType);
+    lv_obj_t* Show(lv_obj_t*);
+    void Hide();
 };
 
 /**
@@ -43,6 +45,7 @@ private:
 public:
     Desktop();
     void Show();
+    void Hide();
     void SetActiveObj(size_t index);
 };
 
@@ -71,24 +74,7 @@ public:
     Lock();
     ~Lock();
     void Show();
-    void SetActiveObj(size_t index);
-};
-
-/**
- * @brief 顶部状态栏（时间、电量等）
- */
-class TopBar : public InterfaceBase
-{
-private:
-    lv_obj_t *_time_disp;
-    lv_obj_t *_battery_disp;
-    lv_obj_t *_battery_num_disp;
-    lv_obj_t *_icons_disp;
-
-public:
-    TopBar();
-    ~TopBar();
-    void Show();
+    void Hide();
 };
 
 /**
@@ -102,7 +88,8 @@ private:
 public:
     StartAnimation();
     ~StartAnimation();
-    lv_obj_t *Show();
+    void Show();
+    void Hide();
     bool isFinal();
 };
 
@@ -117,17 +104,17 @@ private:
 public:
     StopAnimation();
     ~StopAnimation();
-    lv_obj_t *Show();
+    void Show();
+    void Hide();
     bool isFinal();
 };
 
 class AppInterface : public InterfaceBase
 {
-
 public:
     AppInterface();
-    lv_obj_t *Show();
-
+    void Show(lv_obj_t **app_root);
+    void Hide();
 };
 
 #endif // __Interface_h

@@ -9,11 +9,6 @@
 #include "img.h"
 
 void setup() {
-    #if DEBUG == 1
-    Serial.begin(115400);
-    Serial.printf("Loading...\n\r");
-    #endif // DEBUG
-
     hardwareio_mgr.Load();
 }
 

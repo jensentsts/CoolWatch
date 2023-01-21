@@ -54,13 +54,15 @@ public:
     ~AppBase();
     Resource GetDataPackage() const;
     AppRuntimeStatue GetStatue();
+    void Show();
+    void Hide();
     /**
      * @brief app启动
      * @note Start()只会在app启动时运行一次
      *
      * @return lv_obj_t* 返回this->_root
      */
-    lv_obj_t *Start();
+    void Start();
     /**
      * @brief 循环
      * @note while (appNotExit()) { Loop(); }

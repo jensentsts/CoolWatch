@@ -22,7 +22,10 @@ private:
 public:
     Settings();
     ~Settings();
-    lv_obj_t* Start();
+    void Show();
+    void Start();
+    void Loop();
+    void Stop();
 };
 
 #endif // __Settings_h

@@ -33,6 +33,7 @@ void CoolWidget::Hide()
     if (this->_root != nullptr)
     {
         lv_obj_del(this->_root);
+        this->_root = nullptr;
     }
 }
 

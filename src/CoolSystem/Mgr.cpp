@@ -23,7 +23,7 @@ TaskMgr task_mgr;
 AppPackageMgr app_package_mgr;
 HardwareIOMgr hardwareio_mgr;
 InterfaceMgr interface_mgr;
-ResourceMgr resource_mgr;
+Resource resource_root;
 
 //////////////////////////////////////////////////////////////////////////////
 HardwareIOMgr::HardwareIOMgr()
@@ -68,10 +68,6 @@ void HardwareIOMgr::Load()
     {
         return;
     }
-#if DEBUG == 1
-    Serial.printf("Start to Boot. \r\n");
-#endif
-    resource_mgr.Load();
     interface_mgr.Load();
     app_package_mgr.Load();
     task_mgr.Load();
@@ -82,7 +78,7 @@ void HardwareIOMgr::Load()
 void HardwareIOMgr::Close()
 {
     interface_mgr.Close();
-    resource_mgr.SaveAll();
+    // @todo save all
 }
 
 void HardwareIOMgr::Compass_Cmd(bool cmd)
@@ -273,51 +269,71 @@ void InterfaceMgr::_StopAnimationPlay()
 void InterfaceMgr::Load()
 {
     this->_interface_arr.push_back(Desktop());
-    this->_interface_arr.push_back(TopBar());
     this->_interface_arr.push_back(Cards());
     this->_interface_arr.push_back(MainInterface());
     this->_interface_arr.push_back(Lock());
+    this->_interface_arr.push_back(AppInterface());
     decltype(this->_interface_arr)::iterator iter = this->_interface_arr.begin();
     while (iter != this->_interface_arr.end())
     {
         this->_interfaces[iter->resource["package_name"].asString()] = (InterfaceBase *)&(*iter);
     }
+    this->_on_show.clear();
+
+    this->_left_side_bar = lv_obj_create(lv_layer_top());
+    lv_obj_set_pos(this->_left_side_bar, 0, 0);
+    lv_obj_set_size(this->_left_side_bar, GESTURE_OPERATION_MARGIN, HEIGHT);
+    lv_obj_add_event_cb(this->_left_side_bar, this->SideBarGesture, LV_EVENT_GESTURE, nullptr);
+
+    this->_right_side_bar = lv_obj_create(lv_layer_top());
+    lv_obj_set_pos(this->_right_side_bar, WIDTH - GESTURE_OPERATION_MARGIN, 0);
+    lv_obj_set_size(this->_right_side_bar, GESTURE_OPERATION_MARGIN, HEIGHT);
+    lv_obj_add_event_cb(this->_right_side_bar, this->SideBarGesture, LV_EVENT_GESTURE, nullptr);
+
+    this->_top_side_bar = lv_obj_create(lv_layer_top());
+    lv_obj_set_pos(this->_top_side_bar, 0, 0);
+    lv_obj_set_size(this->_top_side_bar, WIDTH, GESTURE_OPERATION_MARGIN);
+    lv_obj_add_event_cb(this->_top_side_bar, this->SideBarGesture, LV_EVENT_GESTURE, nullptr);
+
+    this->_bottom_side_bar = lv_obj_create(lv_layer_top());
+    lv_obj_set_pos(this->_bottom_side_bar, 0, HEIGHT - GESTURE_OPERATION_MARGIN);
+    lv_obj_set_size(this->_bottom_side_bar, WIDTH, GESTURE_OPERATION_MARGIN);
+    lv_obj_add_event_cb(this->_bottom_side_bar, this->SideBarGesture, LV_EVENT_GESTURE, nullptr);
 }
 
 void InterfaceMgr::Close()
 {
 }
 
-void InterfaceMgr::Transfer(std::string interface_package_name)
+void InterfaceMgr::Transfer(std::string package_name)
 {
-}
-//////////////////////////////////////////////////////////////////////////////
-ResourceMgr::ResourceMgr()
-{
-}
-
-void ResourceMgr::Load()
-{
-    // @todo
-    resource["SysInfo"]["Name"] = "CoolWatch";
-    resource["SysInfo"]["Version"] = "0.0.1";
-    resource["App"]["Settings"]["icon"] = gImage_Settings;
-    resource["Interface"]["Desktop"]["background_img"] = gImage_desktopImg;
+    if (!this->_on_show.empty())
+    {
+        ((InterfaceBase *)(this->_interfaces[this->_on_show].asPointer()))->Hide();
+    }
+    ((InterfaceBase *)(this->_interfaces[package_name].asPointer()))->Show(nullptr);
+    this->_on_show = package_name;
 }
 
-void ResourceMgr::SaveAll()
+void InterfaceMgr::SideBarGesture(lv_event_t *event)
 {
-    // @todo
-}
-
-void ResourceMgr::Close()
-{
-    this->SaveAll();
-}
-
-template <typename IndexType>
-Resource ResourceMgr::operator[](IndexType index)
-{
-    return this->resource[index];
+    lv_dir_t gesture = lv_indev_get_gesture_dir(lv_indev_get_act());
+    lv_obj_t *target =  lv_event_get_target(event);
+    if (target == interface_mgr._left_side_bar && gesture == LV_DIR_RIGHT)
+    {
+        // @todo turn back or switch interface
+    }
+    else if (target == interface_mgr._right_side_bar && gesture == LV_DIR_LEFT)
+    {
+        // @todo turn back or switch interface
+    }
+    else if (target == interface_mgr._top_side_bar && gesture == LV_DIR_BOTTOM)
+    {
+        // @todo turn into Lock
+    }
+    else if (target == interface_mgr._bottom_side_bar && gesture == LV_DIR_TOP)
+    {
+        // @todo turn off app or else.
+    }
 }
 //////////////////////////////////////////////////////////////////////////////

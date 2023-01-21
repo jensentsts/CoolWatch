@@ -5,7 +5,7 @@
 #include "lvgl.h"
 #include "Resource.h"
 
-Resource CreateAppPackageData(std::string package_name/* = "Unknown"*/, std::string app_title/* = "Untitled"*/, Resource icon/* = CreateGraph()*/, void *app_pointer)
+Resource CreateAppPackageData(std::string package_name /* = "Unknown"*/, std::string app_title /* = "Untitled"*/, Resource icon /* = CreateGraph()*/, void *app_pointer)
 {
     Resource res;
     res["package_name"] = package_name;
@@ -45,11 +45,11 @@ AppRuntimeStatue AppBase::GetStatue()
     return this->_statue;
 }
 
-lv_obj_t *AppBase::Start()
+void AppBase::Show()
 {
     if (this->_root != nullptr)
     {
-        return this->_root;
+        return;
     }
 
     // _root
@@ -72,10 +72,17 @@ lv_obj_t *AppBase::Start()
     this->_container = lv_obj_create(this->_root);
     lv_obj_set_width(this->_container, WIDTH);
     lv_obj_set_height(this->_container, HEIGHT - APP_TITLE_HEIGHT);
+}
 
+void AppBase::Hide()
+{
+    lv_obj_del(this->_root);
+    this->_root = nullptr;
+}
+
+void AppBase::Start()
+{
     this->_statue = READY;
-
-    return this->_root;
 }
 
 void AppBase::Loop()
@@ -85,6 +92,5 @@ void AppBase::Loop()
 
 void AppBase::Stop()
 {
-    lv_obj_del(this->_root);
     this->_statue = READY;
 }

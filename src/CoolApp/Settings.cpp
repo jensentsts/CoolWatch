@@ -16,11 +16,22 @@ Settings::~Settings()
 {
 }
 
-lv_obj_t* Settings::Start()
+void Settings::Show()
+{
+    AppBase::Show();
+}
+
+void Settings::Start()
 {
     AppBase::Start();
+}
 
-    
+void Settings::Loop()
+{
 
-    return this->_root;
+}
+
+void Settings::Stop()
+{
+
 }

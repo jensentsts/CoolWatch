@@ -10,6 +10,16 @@ Resource &InterfaceBase::operator[](IndexType index)
     return this->resource[index];
 }
 
+lv_obj_t* InterfaceBase::Show(lv_obj_t* father)
+{
+    return CoolWidget::Show(father);
+}
+
+void InterfaceBase::Hide()
+{
+    CoolWidget::Hide();
+}
+
 /**
  * @brief 在桌面上点击app图标时，启动app
  *
@@ -87,15 +97,6 @@ void Lock::Show()
     // date
 }
 
-TopBar::TopBar()
-{
-    this->resource["package_name"] = "TopBar";
-}
-
-TopBar::~TopBar()
-{
-}
-
 void TopBar::Show()
 {
 }
@@ -110,11 +111,11 @@ StartAnimation::~StartAnimation()
 {
 }
 
-lv_obj_t *StartAnimation::Show()
+void StartAnimation::Show()
 {
     if (this->_root != nullptr)
     {
-        return this->_root;
+        return;
     }
 
     InterfaceBase::Show(nullptr);
@@ -122,8 +123,6 @@ lv_obj_t *StartAnimation::Show()
     this->_label = lv_label_create(this->_root);
     lv_label_set_text(this->_label, "Hello, World");
     lv_obj_set_align(this->_label, LV_ALIGN_CENTER);
-
-    return this->_root;
 }
 
 bool StartAnimation::isFinal()
@@ -141,11 +140,11 @@ StopAnimation::~StopAnimation()
 {
 }
 
-lv_obj_t *StopAnimation::Show()
+void StopAnimation::Show()
 {
     if (this->_root != nullptr)
     {
-        return this->_root;
+        return;
     }
 
     InterfaceBase::Show(nullptr);
@@ -153,12 +152,28 @@ lv_obj_t *StopAnimation::Show()
     this->_label = lv_label_create(this->_root);
     lv_label_set_text(this->_label, "Hello, World");
     lv_obj_set_align(this->_label, LV_ALIGN_CENTER);
-
-    return this->_root;
 }
 
 bool StopAnimation::isFinal()
 {
     /* @todo */
     return true;
+}
+
+AppInterface::AppInterface() : InterfaceBase()
+{
+    this->resource["package_name"] = "AppInterface";
+}
+
+void AppInterface::Show(lv_obj_t **app_root)
+{
+    InterfaceBase::Show(nullptr);
+    *app_root = lv_obj_create(this->_root);
+    // @todo animation
+}
+
+void AppInterface::Hide()
+{
+    // @todo animation
+    InterfaceBase::Hide();
 }
